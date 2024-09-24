@@ -1,5 +1,12 @@
 # LungAI
 
+## DISCLAIMER
+
+**LungAI is intended for educational and demonstration purposes only.** The predictions made by the AI model should not be used for medical diagnosis, treatment, or as a substitute for professional medical advice. Lung cancer detection and diagnosis should always be performed by qualified healthcare professionals using certified medical tools and clinical assessments.
+
+The developers of this project do not assume any liability for decisions made based on the output of this application. For any concerns related to lung cancer or any other health condition, please consult a licensed medical professional.
+
+
 ## Overview
 
 **LungAI** is a web application designed to detect early signs of lung cancer by analyzing CT scans using a trained AI model. The platform uses state-of-the-art convolutional neural network (CNN) techniques to predict whether lung cancer is present in the uploaded scans. The primary goal of LungAI is to make early detection of lung cancer more accessible and user-friendly.
