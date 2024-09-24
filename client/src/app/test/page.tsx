@@ -10,12 +10,12 @@ export default function Test() {
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files ? event.target.files[0] : null;
     setFile(selectedFile);
-    setPrediction(null); 
+    setPrediction(null); // Clear previous prediction when a new file is uploaded
   };
 
   const handleSubmit = async () => {
     if (file) {
-      setLoading(true); 
+      setLoading(true); // Show loading state
       const formData = new FormData();
       formData.append('file', file);
 
@@ -27,14 +27,14 @@ export default function Test() {
 
         if (response.ok) {
           const data = await response.json();
-          setPrediction(data.prediction); 
+          setPrediction(data.prediction); // Assuming your backend returns a JSON with 'prediction'
         } else {
           setPrediction('Error: Unable to analyze the scan.');
         }
       } catch (error) {
         setPrediction('Error: Failed to communicate with the backend.');
       } finally {
-        setLoading(false); 
+        setLoading(false); // Hide loading state
       }
     }
   };

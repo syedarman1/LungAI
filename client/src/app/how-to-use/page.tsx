@@ -30,14 +30,14 @@ export default function HowToUse() {
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Step 2: Upload the CT Scan</h3>
             <p className="text-md text-gray-700">
-              Go to the <a href="/test" className="text-blue-600 underline">Test Page</a> and click the "Choose File" button. Select the CT scan image file from your device that you want to upload for analysis.
+              Go to the <a href="/test" className="text-blue-600 underline">Test Page</a> and click the &quot;Choose File&quot; button. Select the CT scan image file from your device that you want to upload for analysis.
             </p>
           </div>
 
           <div className="bg-white p-6 rounded-lg shadow-md">
             <h3 className="text-2xl font-bold text-gray-900 mb-4">Step 3: Submit for Analysis</h3>
             <p className="text-md text-gray-700">
-              After uploading the file, click the "Analyze Scan" button. LungAI will process the image using our AI model and provide a prediction within seconds.
+              After uploading the file, click the &quot;Analyze Scan&quot; button. LungAI will process the image using our AI model and provide a prediction within seconds.
             </p>
           </div>
 
