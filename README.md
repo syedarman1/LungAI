@@ -59,3 +59,103 @@
 ```bash
 git clone https://github.com/syedarman1/LungAI.git
 cd LungAI
+
+
+## Project Structure
+
+```plaintext
+LungAI/
+├── client/                     # Frontend project (Next.js)
+│   ├── src/
+│   │   ├── app/                 # Application pages
+│   │   ├── components/          # Shared components
+│   │   └── globals.css          # Global CSS styles
+├── server/                     # Backend project (FastAPI)
+│   ├── app.py                   # FastAPI app and model inference logic
+│   ├── models/                  # Pre-trained models and related files
+└── README.md                    # Project documentation
+
+## Usage Instructions
+
+### Frontend Setup
+
+Navigate to the `client/` directory:
+
+cd client
+
+Install dependencies:
+
+npm install
+
+Run the development server:
+
+npm run dev
+
+The application will run on http://localhost:3000.
+
+To build the frontend for production:
+
+npm run build
+
+To start the frontend in production mode:
+
+npm start
+
+### Backend Setup
+
+Navigate to the `server/` directory:
+
+cd server
+
+Create a virtual environment and activate it:
+
+python3 -m venv venv
+source venv/bin/activate  # On Windows use `venv\Scripts\activate`
+
+Install the required Python dependencies:
+
+pip install -r requirements.txt
+
+Start the FastAPI server:
+
+uvicorn app:app --reload
+
+The server will be running on http://127.0.0.1:8000.
+
+### Model Details
+
+The pre-trained CNN model, `cancer_detection_model.h5`, is located in the `server/models/` directory. The model is used for image classification and returns whether a CT scan is cancerous or not.
+
+- Input format: CT scans in `.jpg`, `.png`, or `.dcm` format.
+- Output: A binary prediction indicating whether the scan shows signs of cancer.
+- The AI model was trained on public datasets of lung CT scans using TensorFlow and Keras.
+
+### API Endpoints
+
+- **POST /predict**: Accepts an image file, processes it, and returns a prediction result (cancerous or not).
+
+Example request:
+
+curl -X POST "http://localhost:8000/predict" -F "file=@/path/to/your/image.png"
+
+Example response:
+
+{
+  "prediction": "Cancerous"
+}
+
+### Future Work
+
+- Improve the AI model accuracy by training with a larger dataset.
+- Add user authentication to save prediction history.
+- Expand the model to detect multiple stages of lung cancer.
+- Implement more detailed prediction insights and a confidence score for predictions.
+- Add integrations for importing medical data directly from healthcare systems.
+
+### Contributing
+
+If you'd like to contribute to this project, feel free to fork the repository and submit a pull request. You can also open an issue if you encounter any bugs or have feature suggestions.
+
+### License
+
+This project is licensed under the MIT License. You can view the full license here.
