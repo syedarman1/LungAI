@@ -8,7 +8,7 @@
 
 ### Live Demo
 
-- **Frontend (Vercel)**: [LungAI Vercel Deployment](https://your-vercel-link.com)
+- **Frontend (Vercel)**: [LungAI Vercel Deployment](https://lung-ai-beta.vercel.app/)
 - **Backend (FastAPI)**: [Coming soon once deployed]
 
 ## Features
@@ -43,7 +43,7 @@
   - [Uvicorn](https://www.uvicorn.org/)
 - **Deployment**: 
   - Frontend on [Vercel](https://vercel.com/)
-  - Backend on [AWS EC2](https://aws.amazon.com/ec2/) or similar
+  - Backend on [AWS EC2](https://aws.amazon.com/ec2/)
 
 ## Getting Started
 
