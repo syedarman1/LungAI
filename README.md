@@ -56,14 +56,11 @@
 
 ### Clone the repository
 
-```bash
 git clone https://github.com/syedarman1/LungAI.git
 cd LungAI
 
-
 ## Project Structure
 
-```plaintext
 LungAI/
 ├── client/                     # Frontend project (Next.js)
 │   ├── src/
