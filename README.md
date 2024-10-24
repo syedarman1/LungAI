@@ -1,6 +1,6 @@
 # LungAI
 
-## DISCLAIMER !!!
+## DISCLAIMER !!
 
 **LungAI is intended for educational and demonstration purposes only.** The predictions made by the AI model should not be used for medical diagnosis, treatment, or as a substitute for professional medical advice. Lung cancer detection and diagnosis should always be performed by qualified healthcare professionals using certified medical tools and clinical assessments.
 
