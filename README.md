@@ -162,4 +162,4 @@ If you'd like to contribute to this project, feel free to fork the repository an
 
 ### License
 
-This project is licensed under the MIT License. You can view the full license here.
+This project is licensed under the MIT License. You can view the full license [here](LICENSE).
