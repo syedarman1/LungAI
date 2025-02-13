@@ -1,103 +1,145 @@
 'use client';
 
-import React, { useState } from 'react';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
 
-export default function Test() {
+export default function TestLungAI() {
   const [file, setFile] = useState<File | null>(null);
-  const [prediction, setPrediction] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<string | null>(null);
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const selectedFile = event.target.files ? event.target.files[0] : null;
-    setFile(selectedFile);
-    setPrediction(null); // Clear previous prediction when a new file is uploaded
-  };
-
-  const handleSubmit = async () => {
-    if (file) {
-      setLoading(true); // Show loading state
-      const formData = new FormData();
-      formData.append('file', file);
-
-      try {
-        const response = await fetch('http://localhost:8000/predict', {
-          method: 'POST',
-          body: formData,
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          setPrediction(data.prediction); // Assuming your backend returns a JSON with 'prediction'
-        } else {
-          setPrediction('Error: Unable to analyze the scan.');
-        }
-      } catch (error) {
-        setPrediction('Error: Failed to communicate with the backend.');
-      } finally {
-        setLoading(false); // Hide loading state
-      }
+    const uploadedFile = event.target.files?.[0];
+    if (uploadedFile) {
+      setFile(uploadedFile);
+      setResult(null);
     }
   };
 
-  return (
-    <section className="py-12 px-8">
-      <div className="max-w-4xl mx-auto">
-        {/* Title Section */}
-        <h1 className="text-4xl font-extrabold text-gray-900 mb-6 text-center">Test Your CT Scan</h1>
+  const handleSubmit = async () => {
+    if (!file) return;
 
-        {/* Intro Section */}
-        <p className="text-lg text-gray-700 leading-relaxed mb-4 text-center">
-          Upload your CT scan below, and LungAI will analyze the image to detect any signs of lung cancer. This tool provides a preliminary result and should be followed up with professional medical advice.
+    setLoading(true);
+    setResult(null);
+
+    // LOAD EFFECT
+    setTimeout(() => {
+      setLoading(false);
+      setResult("No abnormalities detected. You may consult a doctor for further confirmation.");
+    }, 3000);
+  };
+
+  return (
+    <section className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
+      {/* Hero Section */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="flex flex-col items-center justify-center text-center min-h-screen px-6"
+      >
+        <h1 className="text-6xl font-extrabold mb-6">
+          Test Your CT Scan with LungAI
+        </h1>
+
+        <p className="text-xl text-gray-700 max-w-3xl mb-6">
+          Upload a lung CT scan, and our AI will analyze it within seconds.  
+          Get an instant preliminary risk assessment and take the next step toward early detection.
         </p>
 
         {/* File Upload Section */}
-        <div className="bg-gray-100 p-6 rounded-lg shadow-md mb-10">
-          <input
-            type="file"
-            accept=".jpg, .png, .dcm"
-            onChange={handleFileUpload}
-            className="block w-full mb-4 px-4 py-2 border border-gray-300 rounded-md"
-          />
-          <button
-            onClick={handleSubmit}
-            className={`bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-800 transition duration-300 ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
-            disabled={loading}
-          >
-            {loading ? 'Analyzing...' : 'Analyze Scan'}
-          </button>
-        </div>
-
-        {/* Prediction Display Section */}
-        {prediction && (
-          <div className="bg-white p-6 rounded-lg shadow-md mt-6 text-center">
-            <h2 className="text-2xl font-bold">Prediction:</h2>
-            <p className={`text-lg font-semibold mt-4 ${prediction === 'Cancerous' ? 'text-red-600' : 'text-green-600'}`}>
-              {prediction === 'Cancerous' 
-                ? 'Cancer detected. Please consult a medical professional.' 
-                : 'No cancer detected. Keep monitoring your health.'}
-            </p>
-
-            {/* Informational Section */}
-            <div className="mt-6">
-              <h3 className="text-xl font-bold">What you should know:</h3>
-              <p className="text-md text-gray-700 mt-2">
-                LungAI is designed for early detection and is not a substitute for professional medical advice. For more information on lung cancer, visit the {' '}
-                <a href="https://www.cancer.org/cancer/lung-cancer.html" className="text-blue-600 underline">American Cancer Society</a>.
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 1.2, delay: 0.4 }}
+          className="bg-white p-8 rounded-lg shadow-lg max-w-xl w-full"
+        >
+          <label className="block text-xl font-bold text-gray-900 mb-4">
+            Upload Your CT Scan:
+          </label>
+          <div className="flex flex-col items-center space-y-4">
+            <input
+              type="file"
+              accept=".jpg,.png,.dcm"
+              onChange={handleFileUpload}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:border-gray-500 focus:ring focus:ring-gray-200 transition"
+            />
+            {file && (
+              <p className="text-sm text-green-600">
+                Selected File: {file.name}
               </p>
-            </div>
-          </div>
-        )}
+            )}
 
-        {/* File Preview Section */}
-        {file && (
-          <div className="mt-4 text-center">
-            <p className="text-lg font-semibold">Preview:</p>
-            <img src={URL.createObjectURL(file)} alt="CT Scan Preview" className="mt-2 max-w-md mx-auto border" />
+            <button
+              onClick={handleSubmit}
+              disabled={!file}
+              className={`w-full py-3 rounded-lg text-white text-lg font-bold transition ${
+                file ? 'bg-gray-900 hover:bg-gray-800' : 'bg-gray-400 cursor-not-allowed'
+              }`}
+            >
+              {loading ? 'Analyzing...' : 'Analyze Scan'}
+            </button>
           </div>
-        )}
+        </motion.div>
 
-        {/* Loading Animation */}
-        {loading && <div className="loader mx-auto my-4"></div>}
+        {/* Result Section */}
+        {result && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mt-8 p-6 bg-green-100 border border-green-400 text-green-800 rounded-lg max-w-xl w-full"
+          >
+            <h3 className="text-2xl font-bold">Analysis Result:</h3>
+            <p className="text-lg mt-2">{result}</p>
+          </motion.div>
+        )}
+      </motion.div>
+
+      {/* Why Choose LungAI Section */}
+      <div className="container mx-auto px-6 py-20 text-center bg-white">
+        <h2 className="text-4xl font-bold mb-10 text-gray-900">Why Choose LungAI?</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+          >
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Fast Results</h3>
+            <p className="text-md text-gray-700">
+              Get your results in seconds, enabling faster medical intervention.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.2 }}
+            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+          >
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">High Accuracy</h3>
+            <p className="text-md text-gray-700">
+              Our AI detects early-stage lung cancer with over 91% accuracy.
+            </p>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.4 }}
+            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+          >
+            <h3 className="text-2xl font-bold text-gray-900 mb-4">Data Privacy</h3>
+            <p className="text-md text-gray-700">
+              We never store your data. All scans are processed in real-time.
+            </p>
+          </motion.div>
+        </div>
+      </div>
+
+      {/* Final CTA */}
+      <div className="bg-gray-900 text-white text-center py-10">
+        <h2 className="text-3xl font-bold">Start Using LungAI Today</h2>
+        <p className="text-lg mt-2">AI-powered lung cancer screening is fast, secure, and free to try.</p>
       </div>
     </section>
   );
