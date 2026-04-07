@@ -2,46 +2,107 @@
 @tailwind components;
 @tailwind utilities;
 
-nav ul {
-  display: flex;
-  gap: 15px;
-  list-style: none;
+@layer base {
+  :root {
+    /* Clinical Dark — radiology workstation palette */
+    --background: 222 47% 6%;
+    --foreground: 210 40% 98%;
+
+    --card: 222 40% 9%;
+    --card-foreground: 210 40% 98%;
+
+    --primary: 187 100% 50%;            /* cyan-400ish */
+    --primary-foreground: 222 47% 6%;
+
+    --secondary: 217 33% 17%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217 33% 13%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 187 80% 40%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 210 40% 98%;
+
+    --success: 142 71% 45%;
+    --success-foreground: 222 47% 6%;
+
+    --border: 217 33% 18%;
+    --input: 217 33% 18%;
+    --ring: 187 100% 50%;
+
+    --radius: 0.75rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply bg-background text-foreground;
+    font-feature-settings: "rlig" 1, "calt" 1, "ss01" 1;
+  }
+
+  body {
+    background-image:
+      radial-gradient(circle at 15% 0%, hsl(var(--primary) / 0.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, hsl(var(--accent) / 0.06), transparent 40%);
+    background-attachment: fixed;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.3);
+    color: hsl(var(--foreground));
+  }
 }
 
-nav ul li a {
-  text-decoration: none;
-  color: theme('colors.gray.700'); 
-  transition: color 0.3s ease;
-}
+@layer components {
+  .grid-bg {
+    background-image:
+      linear-gradient(to right, hsl(var(--border) / 0.5) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--border) / 0.5) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
 
-nav ul li a:hover {
-  color: theme('colors.green.600'); 
-}
+  .glow-cyan {
+    box-shadow:
+      0 0 0 1px hsl(var(--primary) / 0.4),
+      0 0 24px hsl(var(--primary) / 0.25),
+      0 0 64px hsl(var(--primary) / 0.1);
+  }
 
-button {
-  padding: 10px 20px;
-  background-color: theme('colors.gray.900'); 
-  color: theme('colors.white'); 
-  border: none;
-  cursor: pointer;
-  border-radius: 8px;
-  transition: background-color 0.3s ease;
-}
+  .text-glow {
+    text-shadow: 0 0 24px hsl(var(--primary) / 0.6);
+  }
 
-button:hover {
-  background-color: theme('colors.gray.800'); 
-}
+  .data-label {
+    @apply font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground;
+  }
 
-.loader {
-  border: 4px solid theme('colors.gray.200'); 
-  border-top: 4px solid theme('colors.green.600'); 
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 2s linear infinite;
-}
+  .scan-frame {
+    position: relative;
+    overflow: hidden;
+    border: 1px solid hsl(var(--primary) / 0.4);
+    border-radius: var(--radius);
+    background: hsl(var(--card));
+  }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  .scan-frame::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      transparent,
+      hsl(var(--primary) / 0.5),
+      transparent
+    );
+    height: 4px;
+    animation: scan-line 2.5s linear infinite;
+    pointer-events: none;
+    z-index: 10;
+  }
 }

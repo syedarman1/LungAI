@@ -1,116 +1,146 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import Link from "next/link";
+import { ArrowRight, Upload, Play, FileText } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-export default function HowToUse() {
+const steps = [
+  {
+    n: "01",
+    icon: Upload,
+    title: "Upload a slice",
+    body: "Drag a JPG or PNG of a lung CT slice into the analyzer, or click to browse.",
+  },
+  {
+    n: "02",
+    icon: Play,
+    title: "Run analysis",
+    body: "Hit the Analyze button. The file is sent to the FastAPI backend and inference runs in under a second.",
+  },
+  {
+    n: "03",
+    icon: FileText,
+    title: "Read the result",
+    body: "You'll see a binary classification, a confidence percentage, and the raw model score.",
+  },
+];
+
+const faqs = [
+  {
+    q: "What file formats are supported?",
+    a: "JPG and PNG. DICOM support is on the roadmap once the backend ships pydicom handling.",
+  },
+  {
+    q: "How long does inference take?",
+    a: "Sub-second on most machines. The model is small and runs on CPU.",
+  },
+  {
+    q: "Is my data stored?",
+    a: "No. Files are processed in memory and discarded as soon as the response is sent.",
+  },
+  {
+    q: "Can I use this for diagnosis?",
+    a: "No. LungAI is an educational research demo, not a medical device. Always consult a licensed clinician.",
+  },
+];
+
+export default function HowToUsePage() {
   return (
-    <section className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
-      {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col items-center justify-center text-center min-h-screen px-6"
-      >
-        <h1 className="text-6xl font-extrabold mb-6">
-          How to Use LungAI
-        </h1>
-
-        {/*  Explanation */}
-        <p className="text-xl text-gray-900 max-w-3xl mb-6">
-          LungAI makes it easy to detect potential lung cancer early.  
-          Simply upload a <strong className="text-green-600">CT scan image</strong>, and our AI will analyze it within <strong className="text-green-600">seconds</strong>.
-        </p>
-
-        {/* Quick Start */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.4 }}
-          className="bg-white p-8 rounded-lg shadow-lg max-w-xl mb-6"
-        >
-          <span className="text-gray-700 font-bold">What You Need:</span>  
-          <br />
-          ✔ A CT scan image (<strong className="text-green-600">JPG, PNG, or DICOM</strong>)  
-          ✔ A <strong className="text-green-600">stable internet connection</strong>  
-          ✔ A <strong className="text-green-600">few seconds</strong> for AI analysis  
-        </motion.div>
-      </motion.div>
-
-      {/* Stepby Step Guide */}
-      <div className="container mx-auto px-6 py-20 text-center bg-white">
-        <h2 className="text-4xl font-bold mb-10 text-gray-900">Step-by-Step Guide</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+    <>
+      <section className="relative overflow-hidden border-b border-border/60">
+        <div className="absolute inset-0 grid-bg opacity-30 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
+        <div className="absolute inset-0 bg-radial-fade pointer-events-none" />
+        <div className="container relative pt-24 pb-20 text-center">
+          <Badge variant="default" className="mb-4">GUIDE</Badge>
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+            className="text-4xl md:text-6xl font-bold tracking-tight"
           >
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Step 1: Upload Your CT Scan</h3>
-            <p className="text-md text-gray-700">Click the <strong className="text-green-600">"Check Your CT Scan"</strong> button and select your image file.</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-          >
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Step 2: AI Analysis</h3>
-            <p className="text-md text-gray-700">LungAI will process the image and detect potential abnormalities.</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.4 }}
-            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-          >
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Step 3: Review Your Results</h3>
-            <p className="text-md text-gray-700">Instantly receive a <strong className="text-green-600">risk assessment</strong> and next steps.</p>
-          </motion.div>
+            How to use
+            <br />
+            <span className="text-primary text-glow">LungAI.</span>
+          </motion.h1>
+          <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
+            Three steps. No signup. No tracking. Just upload a CT slice and read
+            the score.
+          </p>
         </div>
-      </div>
+      </section>
 
-      {/* FAQ */}
-      <div className="bg-gray-50 py-20 px-6">
-        <h2 className="text-4xl font-bold text-center mb-10 text-gray-900">Frequently Asked Questions</h2>
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">What file formats are supported?</h3>
-            <p className="text-md text-gray-700">
-              We accept <strong className="text-green-600">JPG, PNG, and DICOM</strong> images.  
-              For best results, use <strong className="text-green-600">high-resolution CT scans</strong>.
-            </p>
-          </div>
-          <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">How long does analysis take?</h3>
-            <p className="text-md text-gray-700">
-              The AI model processes scans <strong className="text-green-600">within seconds</strong>,  
-              providing near-instant feedback.
-            </p>
-          </div>
-          <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Is my data private?</h3>
-            <p className="text-md text-gray-700">
-              Yes, we <strong className="text-green-600">never store user uploads</strong>.  
-              All images are processed in real-time and deleted immediately.
-            </p>
-          </div>
-          <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Does this replace a doctor?</h3>
-            <p className="text-md text-gray-700">
-              No. LungAI provides <strong className="text-green-600">preliminary risk assessments</strong>,  
-              but always consult a <strong className="text-green-600">medical professional</strong> for diagnosis.
-            </p>
+      <section className="container py-20">
+        <div className="grid md:grid-cols-3 gap-6">
+          {steps.map((s, i) => {
+            const Icon = s.icon;
+            return (
+              <motion.div
+                key={s.n}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: i * 0.1 }}
+              >
+                <Card className="h-full">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="h-11 w-11 rounded-md bg-primary/10 border border-primary/30 flex items-center justify-center">
+                        <Icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <span className="data-label">STEP {s.n}</span>
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">{s.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {s.body}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="container py-20">
+        <div className="text-center mb-12">
+          <Badge variant="outline" className="mb-3">FAQ</Badge>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            Questions, answered
+          </h2>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {faqs.map((f) => (
+            <Card key={f.q}>
+              <CardContent className="pt-6">
+                <h3 className="text-base font-semibold mb-2">{f.q}</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  {f.a}
+                </p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="container pb-24">
+        <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-card/40 p-12 text-center">
+          <div className="absolute inset-0 grid-bg opacity-20" />
+          <div className="absolute inset-0 bg-radial-fade" />
+          <div className="relative">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
+              Ready to try it?
+            </h2>
+            <Button asChild size="lg" className="mt-4">
+              <Link href="/test">
+                Open analyzer <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
-      </div>
-
-      {/* Final CTA */}
-      <div className="bg-gray-900 text-white text-center py-10">
-        <h2 className="text-3xl font-bold">Try LungAI Today</h2>
-        <p className="text-lg mt-2">Upload your CT scan and take the first step toward early detection.</p>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }

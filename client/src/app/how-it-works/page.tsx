@@ -1,108 +1,197 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
+import Link from "next/link";
+import {
+  ArrowRight,
+  Upload,
+  Cpu,
+  FileText,
+  Layers,
+  Network,
+  Gauge,
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
-export default function HowItWorks() {
+const steps = [
+  {
+    icon: Upload,
+    n: "01",
+    title: "Upload",
+    body: "A CT slice is sent to the FastAPI backend as multipart form data.",
+  },
+  {
+    icon: Layers,
+    n: "02",
+    title: "Preprocess",
+    body: "Image is converted to grayscale, resized to 224×224, and normalized to [0, 1].",
+  },
+  {
+    icon: Network,
+    n: "03",
+    title: "Convolution",
+    body: "A small CNN runs two Conv2D + MaxPool blocks followed by a dense head.",
+  },
+  {
+    icon: Gauge,
+    n: "04",
+    title: "Sigmoid",
+    body: "The final layer outputs a probability between 0 and 1.",
+  },
+  {
+    icon: FileText,
+    n: "05",
+    title: "Threshold",
+    body: "Scores above 0.5 are flagged. The raw score is returned for transparency.",
+  },
+  {
+    icon: Cpu,
+    n: "06",
+    title: "Response",
+    body: "JSON is returned with label, confidence, raw score, and threshold.",
+  },
+];
+
+const compare = [
+  {
+    title: "Traditional radiology",
+    bullets: [
+      "Days to weeks for scans to be reviewed",
+      "Subject to human fatigue and oversight",
+      "Limited specialist access in many regions",
+    ],
+    tone: "muted",
+  },
+  {
+    title: "AI-assisted screening",
+    bullets: [
+      "Sub-second inference per slice",
+      "Consistent baseline across millions of scans",
+      "Available anywhere there's a browser",
+    ],
+    tone: "primary",
+  },
+];
+
+export default function HowItWorksPage() {
   return (
-    <section className="flex flex-col min-h-screen bg-gray-50 text-gray-900">
-      {/* Hero Section */}
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="flex flex-col items-center justify-center text-center min-h-screen px-6"
-      >
-        <h1 className="text-6xl font-extrabold mb-6">
-          How LungAI Works
-        </h1>
-
-        {/* Explanation */}
-        <p className="text-xl text-gray-700 max-w-3xl mb-6">
-          LungAI is an <strong className="text-green-600">AI-powered tool</strong> that analyzes CT scan images to detect potential lung cancer <strong className="text-green-600">earlier than traditional methods</strong>. Using advanced deep learning models, LungAI provides <strong className="text-green-600">instant results</strong> with <strong className="text-green-600">high accuracy</strong>, allowing for faster medical intervention.
-        </p>
-
-        {/* Advantage Box */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 1.2, delay: 0.4 }}
-          className="bg-white p-8 rounded-lg shadow-lg max-w-xl mb-6"
-        >
-          <span className="text-green-600 font-bold">Why Use AI for Detection?</span>  
-          <br />
-          AI can <strong className="text-green-600">analyze CT scans 5x faster</strong> than human experts and detect <strong className="text-green-600">early-stage lung cancer with up to 91% accuracy</strong>.
-        </motion.div>
-
-        {/* Links */}
-        <p className="text-md text-gray-600 mt-2">
-          Learn more:  
-          <a href="https://pubmed.ncbi.nlm.nih.gov/34751894/" target="_blank" className="text-gray-900 hover:underline"> AI in Cancer Detection (PubMed)</a> |  
-          <a href="https://jamanetwork.com/journals/jamaoncology/fullarticle/2785671" target="_blank" className="text-gray-900 hover:underline"> JAMA Oncology Report</a>
-        </p>
-      </motion.div>
-
-      {/* SBS Process */}
-      <div className="container mx-auto px-6 py-20 text-center bg-white">
-        <h2 className="text-4xl font-bold mb-10 text-gray-900">Step-by-Step Process</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+    <>
+      <section className="relative overflow-hidden border-b border-border/60">
+        <div className="absolute inset-0 grid-bg opacity-30 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
+        <div className="absolute inset-0 bg-radial-fade pointer-events-none" />
+        <div className="container relative pt-24 pb-20 text-center">
+          <Badge variant="default" className="mb-4">PIPELINE</Badge>
+          <motion.h1
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
+            className="text-4xl md:text-6xl font-bold tracking-tight"
           >
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Step 1: Upload Your CT Scan</h3>
-            <p className="text-md text-gray-700">Simply drag and drop your lung CT scan into LungAI's secure system.</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.2 }}
-            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-          >
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Step 2: AI-Powered Analysis</h3>
-            <p className="text-md text-gray-700">Our deep learning model scans for abnormalities and potential cancerous growths.</p>
-          </motion.div>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.4 }}
-            className="bg-gray-50 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300"
-          >
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Step 3: Instant Results</h3>
-            <p className="text-md text-gray-700">Get a preliminary report immediately, allowing you to consult a doctor sooner.</p>
-          </motion.div>
+            How LungAI
+            <br />
+            <span className="text-primary text-glow">processes a scan.</span>
+          </motion.h1>
+          <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
+            A trained CNN runs convolutional inference over a 224×224 grayscale
+            CT slice and returns a binary classification with a confidence score.
+          </p>
         </div>
-      </div>
+      </section>
 
-      {/* How AI Compares to Traditional Screening */}
-      <div className="bg-gray-50 py-20 px-6">
-        <h2 className="text-4xl font-bold text-center mb-10 text-gray-900">How AI Outperforms Traditional Screening</h2>
-        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
-          <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">Traditional Screening</h3>
-            <p className="text-md text-gray-700">
-              • Takes <strong className="text-green-600">weeks</strong> for radiologists to analyze scans  
-              • <strong className="text-green-600">High chance of human error</strong> in early-stage cases  
-              • <strong className="text-green-600">Limited access</strong> to specialists in many areas  
+      <section className="container py-20">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {steps.map((step, i) => {
+            const Icon = step.icon;
+            return (
+              <motion.div
+                key={step.n}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: i * 0.06 }}
+              >
+                <Card className="h-full">
+                  <CardContent className="pt-6">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="h-11 w-11 rounded-md bg-primary/10 border border-primary/30 flex items-center justify-center">
+                        <Icon className="h-5 w-5 text-primary" />
+                      </div>
+                      <span className="data-label">{step.n}</span>
+                    </div>
+                    <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {step.body}
+                    </p>
+                  </CardContent>
+                </Card>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
+
+      <section className="container py-20">
+        <div className="text-center mb-12">
+          <Badge variant="outline" className="mb-3">COMPARISON</Badge>
+          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
+            Why AI-assisted screening matters
+          </h2>
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+          {compare.map((c) => (
+            <Card
+              key={c.title}
+              className={
+                c.tone === "primary"
+                  ? "border-primary/40 bg-primary/5"
+                  : ""
+              }
+            >
+              <CardContent className="pt-6">
+                <h3 className="text-lg font-semibold mb-4">{c.title}</h3>
+                <ul className="space-y-3">
+                  {c.bullets.map((b) => (
+                    <li
+                      key={b}
+                      className="flex items-start gap-3 text-sm text-muted-foreground"
+                    >
+                      <div
+                        className={`mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 ${
+                          c.tone === "primary" ? "bg-primary" : "bg-border"
+                        }`}
+                      />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </section>
+
+      <section className="container pb-24">
+        <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-card/40 p-12 text-center">
+          <div className="absolute inset-0 grid-bg opacity-20" />
+          <div className="absolute inset-0 bg-radial-fade" />
+          <div className="relative">
+            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
+              See it in action.
+            </h2>
+            <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+              Run the model against a CT slice and watch it return a confidence
+              score in real time.
             </p>
-          </div>
-          <div className="bg-white p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300">
-            <h3 className="text-2xl font-bold text-gray-900 mb-4">AI-Powered Screening</h3>
-            <p className="text-md text-gray-700">
-              • <strong className="text-green-600">Results in seconds</strong>, enabling faster treatment  
-              • Detects abnormalities <strong className="text-green-600">before they become visible to the human eye</strong>  
-              • <strong className="text-green-600">Accessible anywhere</strong>, improving global healthcare  
-            </p>
+            <Button asChild size="lg">
+              <Link href="/test">
+                Open analyzer <ArrowRight className="h-4 w-4" />
+              </Link>
+            </Button>
           </div>
         </div>
-      </div>
-
-      {/* Final CTA */}
-      <div className="bg-gray-900 text-white text-center py-10">
-        <h2 className="text-3xl font-bold">Start Using LungAI Today</h2>
-        <p className="text-lg mt-2">AI-powered lung cancer screening is the future of early detection.</p>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
