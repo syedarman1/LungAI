@@ -119,7 +119,7 @@ export default function Home() {
                 <div className="absolute top-3 right-4 data-label">224×224</div>
 
                 {/* Mock CT visual */}
-                <div className="absolute inset-12 rounded-full bg-gradient-radial from-slate-600/40 via-slate-800/60 to-black border border-primary/20">
+                <div className="absolute inset-12 rounded-full border border-primary/20" style={{ background: "radial-gradient(circle at 40% 40%, hsl(var(--muted)), hsl(var(--secondary)) 60%, hsl(var(--primary) / 0.25) 100%)" }}>
                   <div className="absolute inset-6 rounded-full border border-primary/15" />
                   <div className="absolute inset-12 rounded-full border border-primary/10" />
                   <div
