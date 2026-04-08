@@ -20,7 +20,7 @@ app.add_middleware(
 MODEL_PATH = os.path.join("models", "cancer_detection_model.h5")
 VALID_EXTENSIONS = {"jpg", "jpeg", "png"}
 MAX_FILE_BYTES = 10 * 1024 * 1024  # 10 MB
-THRESHOLD = 0.5
+THRESHOLD = 0.35  # Lowered for EfficientNetB0 — model is conservative, this improves cancer recall
 
 model = load_model(MODEL_PATH)
 
@@ -44,12 +44,14 @@ async def predict(file: UploadFile = File(...)):
         raise HTTPException(status_code=413, detail="File too large (max 10 MB).")
 
     try:
-        img = Image.open(io.BytesIO(raw)).convert("L").resize((224, 224))
+        # Convert to grayscale first (normalizes CT scan input), then to RGB
+        # EfficientNetB0 expects 3-channel input; repeating the gray channel works well
+        img = Image.open(io.BytesIO(raw)).convert("L").convert("RGB").resize((224, 224))
     except Exception as exc:
         raise HTTPException(status_code=400, detail=f"Could not read image: {exc}")
 
-    img_array = np.expand_dims(np.array(img), axis=-1)
-    img_array = np.expand_dims(img_array, axis=0).astype("float32") / 255.0
+    # EfficientNetB0 uses built-in preprocessing — keep values in [0, 255]
+    img_array = np.expand_dims(np.array(img), axis=0).astype("float32")
 
     raw_pred = float(model.predict(img_array, verbose=0)[0][0])
     is_cancer = raw_pred > THRESHOLD

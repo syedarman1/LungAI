@@ -1,0 +1,5 @@
+venv/
+__pycache__/
+*.pyc
+requirements_clean.txt
+models/*_old.h5
