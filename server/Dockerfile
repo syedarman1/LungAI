@@ -2,11 +2,16 @@ FROM python:3.12-slim
 
 WORKDIR /app
 
-# Install dependencies first (cached layer)
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install system deps
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgomp1 \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy app and model
+# Install Python dependencies
+COPY requirements.txt .
+RUN pip install --no-cache-dir --timeout=300 -r requirements.txt
+
+# Copy app code and model
 COPY app.py .
 COPY models/ models/
 
