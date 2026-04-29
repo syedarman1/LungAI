@@ -1,0 +1,13 @@
+.git
+.gitignore
+
+client/.next
+client/node_modules
+node_modules
+
+server/__pycache__
+server/.venv
+server/venv
+server/models/cancer_detection_model_old.h5
+
+.DS_Store
