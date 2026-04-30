@@ -7,7 +7,6 @@ import {
   ArrowRight,
   Activity,
   BrainCircuit,
-  FileImage,
   Gauge,
   Microscope,
   Radar,
