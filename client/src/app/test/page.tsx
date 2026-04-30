@@ -1,20 +1,25 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
-  Upload,
-  X,
+  Activity,
   AlertCircle,
-  CheckCircle2,
   AlertTriangle,
-  Loader2,
+  CheckCircle2,
   FileImage,
   FlaskConical,
+  Gauge,
+  Loader2,
+  RotateCcw,
+  ScanLine,
+  ShieldCheck,
+  Upload,
+  X,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 
@@ -38,10 +43,10 @@ const SAMPLES = [
 ];
 
 const MODEL_STATS = [
-  { label: "Test Accuracy", value: "99.7%" },
-  { label: "AUC Score", value: "0.999" },
-  { label: "Training Scans", value: "1,000" },
   { label: "Architecture", value: "EfficientNetB0" },
+  { label: "Input", value: "224 x 224" },
+  { label: "Threshold", value: "0.35" },
+  { label: "Max file", value: "10 MB" },
 ];
 
 export default function TestPage() {
@@ -57,15 +62,18 @@ export default function TestPage() {
     setLoading(true);
     setResult(null);
     setError(null);
+
     try {
       const res = await fetch(`${API_URL}/predict`, {
         method: "POST",
         body: formData,
       });
+
       if (!res.ok) {
         const detail = await res.json().catch(() => ({}));
         throw new Error(detail.detail || `Server error (${res.status})`);
       }
+
       setResult(await res.json());
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -77,8 +85,16 @@ export default function TestPage() {
   const acceptFile = useCallback(
     (f: File) => {
       const ok = ["image/jpeg", "image/png", "image/jpg"].includes(f.type);
-      if (!ok) { setError("Only JPG and PNG files are supported."); return; }
-      if (f.size > 10 * 1024 * 1024) { setError("File too large (max 10 MB)."); return; }
+      if (!ok) {
+        setError("Only JPG and PNG files are supported.");
+        return;
+      }
+
+      if (f.size > 10 * 1024 * 1024) {
+        setError("File too large. Maximum upload size is 10 MB.");
+        return;
+      }
+
       if (previewUrl) URL.revokeObjectURL(previewUrl);
       setFile(f);
       setPreviewUrl(URL.createObjectURL(f));
@@ -110,7 +126,6 @@ export default function TestPage() {
     setActiveSample(null);
   };
 
-  // Load a sample scan and immediately run inference
   const handleSample = async (sample: (typeof SAMPLES)[0]) => {
     reset();
     setActiveSample(sample.id);
@@ -142,92 +157,95 @@ export default function TestPage() {
 
   const isCancer = result?.label === "cancer";
   const confidencePct = result ? Math.round(result.confidence * 100) : 0;
+  const activeSampleData = activeSample
+    ? SAMPLES.find((sample) => sample.id === activeSample)
+    : null;
 
   return (
     <>
-      {/* Hero */}
-      <section className="relative overflow-hidden border-b border-border/60">
-        <div className="absolute inset-0 grid-bg opacity-30 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_70%)]" />
-        <div className="absolute inset-0 bg-radial-fade pointer-events-none" />
-        <div className="container relative pt-20 pb-12 text-center">
-          <Badge variant="default" className="mb-4">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
-            CT SCAN ANALYZER
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold tracking-tight">
-            Run the model on a scan
-          </h1>
-          <p className="mt-4 text-muted-foreground max-w-2xl mx-auto">
-            Upload your own CT slice, or click any patient below to instantly
-            see the model classify a real scan.
-          </p>
-        </div>
-      </section>
+      <section className="relative overflow-hidden bg-[hsl(var(--graphite))] text-white">
+        <div className="grid-bg absolute inset-0 opacity-25" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_16%,hsl(var(--aqua)_/_0.2),transparent_34%),radial-gradient(circle_at_86%_20%,hsl(var(--amber)_/_0.18),transparent_28%)]" />
+        <div className="container relative pt-24 pb-12">
+          <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
+            <div className="max-w-3xl">
+              <Badge className="mb-5 border-[hsl(var(--aqua)/0.3)] bg-[hsl(var(--aqua)/0.1)] text-[hsl(var(--aqua))]">
+                <ScanLine className="h-3.5 w-3.5" />
+                Analyzer command center
+              </Badge>
+              <h1 className="text-4xl font-bold leading-tight md:text-6xl">
+                Upload a scan. Watch the model think.
+              </h1>
+              <p className="mt-5 max-w-2xl text-base leading-7 text-white/70">
+                Select a demo patient or upload your own CT slice. LungAI keeps
+                the raw score, threshold, and confidence visible so every result
+                is easy to inspect.
+              </p>
+            </div>
 
-      {/* Model stats strip */}
-      <section className="border-b border-border/60 bg-secondary/20">
-        <div className="container py-4">
-          <div className="flex flex-wrap justify-center gap-x-10 gap-y-2">
-            {MODEL_STATS.map((s) => (
-              <div key={s.label} className="flex items-center gap-2">
-                <span className="data-label">{s.label}</span>
-                <span className="font-mono font-semibold text-primary">
-                  {s.value}
-                </span>
-              </div>
-            ))}
+            <div className="grid min-w-[280px] grid-cols-2 gap-3">
+              {MODEL_STATS.map((stat) => (
+                <div key={stat.label} className="rounded-lg border border-white/10 bg-white/10 p-3">
+                  <p className="font-mono text-[10px] uppercase text-white/50">
+                    {stat.label}
+                  </p>
+                  <p className="mt-1 font-mono text-sm text-[hsl(var(--aqua))]">{stat.value}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Sample scan picker */}
-      <section className="container py-10">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-center gap-2 mb-5">
+      <section className="soft-band border-b border-border/70">
+        <div className="container py-8">
+          <div className="mb-5 flex items-center gap-2">
             <FlaskConical className="h-4 w-4 text-primary" />
-            <span className="font-semibold">Try a real scan</span>
-            <span className="text-muted-foreground text-sm">
-              — click any patient to run inference instantly
+            <span className="font-semibold">Sample scans</span>
+            <span className="text-sm text-muted-foreground">
+              Click one to run inference instantly.
             </span>
           </div>
-          <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-            {SAMPLES.map((s) => (
+
+          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
+            {SAMPLES.map((sample) => (
               <motion.button
-                key={s.id}
-                whileHover={{ scale: 1.04 }}
-                whileTap={{ scale: 0.97 }}
-                onClick={() => handleSample(s)}
+                key={sample.id}
+                whileHover={{ y: -3 }}
+                whileTap={{ scale: 0.98 }}
+                onClick={() => handleSample(sample)}
                 disabled={loading}
                 className={cn(
-                  "relative rounded-lg overflow-hidden border-2 transition-all aspect-square group",
-                  activeSample === s.id
-                    ? "border-primary shadow-lg shadow-primary/20"
-                    : "border-border hover:border-primary/50"
+                  "group relative aspect-square overflow-hidden rounded-lg border bg-[hsl(var(--graphite))] text-left shadow-[0_18px_42px_-32px_hsl(var(--graphite)_/_0.75)]",
+                  activeSample === sample.id
+                    ? "border-primary ring-2 ring-primary/30"
+                    : "border-white/10 hover:border-primary/50"
                 )}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
-                  src={s.src}
-                  alt={s.hint}
-                  className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity"
+                  src={sample.src}
+                  alt={sample.hint}
+                  className="h-full w-full object-cover opacity-70 grayscale transition-all group-hover:scale-105 group-hover:opacity-95 group-hover:grayscale-0"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                <div className="absolute bottom-1.5 left-0 right-0 text-center">
-                  <span className="text-[10px] font-mono text-white/80">
-                    {s.hint}
-                  </span>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+                <div className="absolute bottom-2 left-2 right-2">
+                  <p className="font-mono text-xs text-white">{sample.hint}</p>
+                  <p className="mt-0.5 truncate text-[11px] text-white/60">
+                    {sample.diagnosis}
+                  </p>
                 </div>
-                {activeSample === s.id && loading && (
+                {activeSample === sample.id && loading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                    <Loader2 className="h-5 w-5 text-primary animate-spin" />
+                    <Loader2 className="h-5 w-5 animate-spin text-[hsl(var(--aqua))]" />
                   </div>
                 )}
-                {activeSample === s.id && result && (
-                  <div className="absolute top-1.5 right-1.5">
+                {activeSample === sample.id && result && (
+                  <div className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5">
                     {isCancer ? (
-                      <AlertTriangle className="h-4 w-4 text-destructive drop-shadow" />
+                      <AlertTriangle className="h-4 w-4 text-red-300" />
                     ) : (
-                      <CheckCircle2 className="h-4 w-4 text-success drop-shadow" />
+                      <CheckCircle2 className="h-4 w-4 text-[hsl(var(--success))]" />
                     )}
                   </div>
                 )}
@@ -237,18 +255,19 @@ export default function TestPage() {
         </div>
       </section>
 
-      {/* Analyzer */}
-      <section className="container pb-16">
-        <div className="grid lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-          {/* LEFT: uploader / preview */}
-          <Card className="overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="data-label">INPUT</span>
+      <section className="container py-12">
+        <div className="grid gap-6 lg:grid-cols-[1.02fr_0.98fr]">
+          <Card className="overflow-hidden border-primary/20">
+            <CardContent className="p-0">
+              <div className="flex items-center justify-between border-b border-border/70 px-6 py-4">
+                <div>
+                  <p className="section-kicker">Input scan</p>
+                  <h2 className="mt-1 text-xl font-semibold">Patient image</h2>
+                </div>
                 {(file || previewUrl) && (
                   <button
                     onClick={reset}
-                    className="text-muted-foreground hover:text-destructive transition-colors"
+                    className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-destructive"
                     aria-label="Reset"
                   >
                     <X className="h-4 w-4" />
@@ -256,98 +275,114 @@ export default function TestPage() {
                 )}
               </div>
 
-              {!previewUrl ? (
-                <label
-                  onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-                  onDragLeave={() => setIsDragging(false)}
-                  onDrop={handleDrop}
-                  className={cn(
-                    "relative flex flex-col items-center justify-center aspect-square rounded-lg border-2 border-dashed transition-all cursor-pointer",
-                    isDragging
-                      ? "border-primary bg-primary/5 scale-[1.01]"
-                      : "border-border hover:border-primary/50 hover:bg-secondary/30"
-                  )}
-                >
-                  <input
-                    type="file"
-                    accept=".jpg,.jpeg,.png"
-                    onChange={handleFileInput}
-                    className="sr-only"
-                  />
-                  <div className="flex flex-col items-center gap-3 text-center px-6">
-                    <div className="h-14 w-14 rounded-full bg-primary/10 border border-primary/30 flex items-center justify-center">
-                      <Upload className="h-6 w-6 text-primary" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium">
-                        Drop a CT scan here, or{" "}
-                        <span className="text-primary">browse</span>
-                      </p>
-                      <p className="text-xs text-muted-foreground mt-1 font-mono">
-                        JPG · PNG · max 10 MB
-                      </p>
-                    </div>
-                  </div>
-                </label>
-              ) : (
-                <div className={cn("scan-frame aspect-square", loading && "glow-cyan")}>
-                  <div className="absolute top-3 left-4 data-label z-10">
-                    {activeSample ? SAMPLES.find(s => s.id === activeSample)?.hint : file?.name.slice(0, 22)}
-                  </div>
-                  <div className="absolute top-3 right-4 data-label z-10">
-                    {file && `${(file.size / 1024).toFixed(0)} KB`}
-                  </div>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={previewUrl}
-                    alt="CT scan preview"
-                    className="absolute inset-0 w-full h-full object-contain p-8"
-                  />
-                  <div className="absolute bottom-3 left-4 data-label z-10">
-                    <FileImage className="inline h-3 w-3 mr-1" />
-                    {activeSample ? "DEMO SCAN" : "PREVIEW"}
-                  </div>
-                  <div className="absolute bottom-3 right-4 data-label z-10">
-                    {loading ? (
-                      <span className="text-primary">● ANALYZING</span>
-                    ) : result ? (
-                      <span className="text-success">● COMPLETE</span>
-                    ) : (
-                      <span>● READY</span>
+              <div className="p-6">
+                {!previewUrl ? (
+                  <label
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      setIsDragging(true);
+                    }}
+                    onDragLeave={() => setIsDragging(false)}
+                    onDrop={handleDrop}
+                    className={cn(
+                      "relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-dashed bg-[hsl(var(--graphite))] text-white",
+                      isDragging
+                        ? "border-[hsl(var(--aqua))] shadow-[0_0_0_6px_hsl(var(--aqua)_/_0.14)]"
+                        : "border-[hsl(var(--aqua)/0.25)] hover:border-[hsl(var(--aqua)/0.6)]"
                     )}
-                  </div>
-                </div>
-              )}
-
-              <Button
-                onClick={handleAnalyze}
-                disabled={!file || loading || !!activeSample}
-                size="lg"
-                className="w-full mt-6"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    Running inference...
-                  </>
-                ) : activeSample ? (
-                  "Sample auto-analyzed above"
+                  >
+                    <input
+                      type="file"
+                      accept=".jpg,.jpeg,.png"
+                      onChange={handleFileInput}
+                      className="sr-only"
+                    />
+                    <div className="grid-bg absolute inset-0 opacity-25" />
+                    <div className="relative z-10 flex flex-col items-center gap-4 text-center">
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[hsl(var(--aqua)/0.3)] bg-[hsl(var(--aqua)/0.1)]">
+                        <Upload className="h-7 w-7 text-[hsl(var(--aqua))]" />
+                      </div>
+                      <div>
+                        <p className="text-base font-semibold">
+                          Drop CT image here, or browse
+                        </p>
+                        <p className="mt-2 font-mono text-xs uppercase text-white/60">
+                          JPG or PNG · 10 MB max
+                        </p>
+                      </div>
+                    </div>
+                  </label>
                 ) : (
-                  "Analyze scan"
+                  <div className={cn("scan-frame aspect-[4/3]", loading && "shadow-[0_0_0_6px_hsl(var(--aqua)_/_0.12)]")}>
+                    <div className="absolute left-4 top-3 z-10 data-label text-[hsl(var(--aqua))]/70">
+                      {activeSampleData?.hint || file?.name.slice(0, 24)}
+                    </div>
+                    <div className="absolute right-4 top-3 z-10 data-label text-[hsl(var(--aqua))]/70">
+                      {file && `${(file.size / 1024).toFixed(0)} KB`}
+                    </div>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={previewUrl}
+                      alt="CT scan preview"
+                      className="absolute inset-0 h-full w-full object-contain p-8"
+                    />
+                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/70 to-transparent px-4 py-4">
+                      <span className="inline-flex items-center gap-1.5 font-mono text-xs uppercase text-white/70">
+                        <FileImage className="h-3.5 w-3.5" />
+                        {activeSample ? "Demo scan" : "Uploaded scan"}
+                      </span>
+                      <span className="font-mono text-xs uppercase text-[hsl(var(--aqua))]">
+                        {loading ? "Analyzing" : result ? "Complete" : "Ready"}
+                      </span>
+                    </div>
+                  </div>
                 )}
-              </Button>
 
-              <p className="text-xs text-muted-foreground mt-3 text-center font-mono">
-                ENDPOINT · {API_URL}/predict
-              </p>
+                <div className="mt-5 grid gap-3 sm:grid-cols-[1fr_auto]">
+                  <Button
+                    onClick={handleAnalyze}
+                    disabled={!file || loading || !!activeSample}
+                    size="lg"
+                    className="w-full"
+                  >
+                    {loading ? (
+                      <>
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                        Running inference
+                      </>
+                    ) : activeSample ? (
+                      "Sample analyzed automatically"
+                    ) : (
+                      "Analyze scan"
+                    )}
+                  </Button>
+
+                  <Button
+                    onClick={reset}
+                    disabled={!file && !previewUrl && !result && !error}
+                    type="button"
+                    variant="outline"
+                    size="lg"
+                  >
+                    <RotateCcw className="h-4 w-4" />
+                    Reset
+                  </Button>
+                </div>
+
+                <p className="mt-4 break-all rounded-md bg-secondary/70 px-3 py-2 font-mono text-xs text-muted-foreground">
+                  Endpoint: {API_URL}/predict
+                </p>
+              </div>
             </CardContent>
           </Card>
 
-          {/* RIGHT: result */}
-          <Card className="overflow-hidden">
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <span className="data-label">OUTPUT</span>
+          <Card className="overflow-hidden border-primary/20">
+            <CardContent className="p-0">
+              <div className="flex items-center justify-between border-b border-border/70 px-6 py-4">
+                <div>
+                  <p className="section-kicker">Output</p>
+                  <h2 className="mt-1 text-xl font-semibold">Result readout</h2>
+                </div>
                 {result && (
                   <Badge variant={isCancer ? "destructive" : "success"}>
                     {result.label.replace("_", " ")}
@@ -355,137 +390,166 @@ export default function TestPage() {
                 )}
               </div>
 
-              <AnimatePresence mode="wait">
-                {error ? (
-                  <motion.div
-                    key="error"
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="rounded-lg border border-destructive/40 bg-destructive/10 p-5"
-                  >
-                    <div className="flex items-start gap-3">
-                      <AlertCircle className="h-5 w-5 text-destructive mt-0.5 shrink-0" />
-                      <div>
-                        <p className="font-semibold text-destructive">Inference failed</p>
-                        <p className="text-sm text-muted-foreground mt-1">{error}</p>
-                        <p className="text-xs text-muted-foreground mt-3 font-mono">
-                          Make sure the backend is running at {API_URL}.
-                        </p>
-                      </div>
-                    </div>
-                  </motion.div>
-                ) : result ? (
-                  <motion.div
-                    key="result"
-                    initial={{ opacity: 0, y: 8 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0 }}
-                    className="space-y-6"
-                  >
-                    <div
-                      className={cn(
-                        "rounded-lg border p-5 flex items-start gap-4",
-                        isCancer
-                          ? "border-destructive/40 bg-destructive/10"
-                          : "border-success/40 bg-success/10"
-                      )}
+              <div className="p-6">
+                <AnimatePresence mode="wait">
+                  {error ? (
+                    <motion.div
+                      key="error"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="rounded-lg border border-destructive/40 bg-destructive/10 p-5"
                     >
-                      {isCancer ? (
-                        <AlertTriangle className="h-6 w-6 text-destructive shrink-0 mt-0.5" />
-                      ) : (
-                        <CheckCircle2 className="h-6 w-6 text-success shrink-0 mt-0.5" />
-                      )}
-                      <div>
-                        <p className={cn("font-semibold text-lg", isCancer ? "text-destructive" : "text-success")}>
-                          {isCancer ? "Anomaly detected" : "No anomaly detected"}
-                        </p>
-                        <p className="text-sm text-muted-foreground mt-1 leading-relaxed">
-                          {result.message}
-                        </p>
+                      <div className="flex items-start gap-3">
+                        <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+                        <div>
+                          <p className="font-semibold text-destructive">
+                            Inference failed
+                          </p>
+                          <p className="mt-1 text-sm text-muted-foreground">
+                            {error}
+                          </p>
+                          <p className="mt-3 font-mono text-xs text-muted-foreground">
+                            Make sure the backend is running at {API_URL}.
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </motion.div>
+                  ) : result ? (
+                    <motion.div
+                      key="result"
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="space-y-5"
+                    >
+                      <div
+                        className={cn(
+                          "rounded-lg border p-5",
+                          isCancer
+                            ? "border-destructive/40 bg-destructive/10"
+                            : "border-success/40 bg-success/10"
+                        )}
+                      >
+                        <div className="flex items-start gap-4">
+                          {isCancer ? (
+                            <AlertTriangle className="mt-0.5 h-7 w-7 shrink-0 text-destructive" />
+                          ) : (
+                            <CheckCircle2 className="mt-0.5 h-7 w-7 shrink-0 text-success" />
+                          )}
+                          <div>
+                            <p className={cn("text-xl font-semibold", isCancer ? "text-destructive" : "text-success")}>
+                              {isCancer ? "Anomaly detected" : "No anomaly detected"}
+                            </p>
+                            <p className="mt-1 text-sm leading-6 text-muted-foreground">
+                              {result.message}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
 
-                    {/* Confidence */}
-                    <div>
-                      <div className="flex items-end justify-between mb-2">
-                        <span className="data-label">Confidence</span>
-                        <span className="font-mono text-2xl font-bold text-primary text-glow">
-                          {confidencePct}%
-                        </span>
+                      <div className="rounded-lg border border-border bg-secondary/50 p-5">
+                        <div className="mb-3 flex items-end justify-between">
+                          <div>
+                            <p className="section-kicker">Confidence</p>
+                            <p className="mt-1 text-sm text-muted-foreground">
+                              Relative to the selected classification.
+                            </p>
+                          </div>
+                          <span className="font-mono text-4xl font-bold text-primary">
+                            {confidencePct}%
+                          </span>
+                        </div>
+                        <Progress
+                          value={confidencePct}
+                          indicatorClassName={isCancer ? "bg-destructive" : "bg-success"}
+                        />
                       </div>
-                      <Progress
-                        value={confidencePct}
-                        indicatorClassName={isCancer ? "bg-destructive" : "bg-success"}
-                      />
-                    </div>
 
-                    {/* Raw stats */}
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="rounded-md border border-border bg-secondary/30 p-3">
-                        <div className="data-label">Raw score</div>
-                        <div className="font-mono text-lg mt-1">{result.raw_score.toFixed(4)}</div>
+                      <div className="grid grid-cols-2 gap-3">
+                        <div className="rounded-lg border border-border bg-white/70 p-4">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Activity className="h-4 w-4" />
+                            <span className="data-label">Raw score</span>
+                          </div>
+                          <div className="mt-2 font-mono text-2xl font-semibold">
+                            {result.raw_score.toFixed(4)}
+                          </div>
+                        </div>
+                        <div className="rounded-lg border border-border bg-white/70 p-4">
+                          <div className="flex items-center gap-2 text-muted-foreground">
+                            <Gauge className="h-4 w-4" />
+                            <span className="data-label">Threshold</span>
+                          </div>
+                          <div className="mt-2 font-mono text-2xl font-semibold">
+                            {result.threshold.toFixed(2)}
+                          </div>
+                        </div>
                       </div>
-                      <div className="rounded-md border border-border bg-secondary/30 p-3">
-                        <div className="data-label">Threshold</div>
-                        <div className="font-mono text-lg mt-1">{result.threshold.toFixed(2)}</div>
-                      </div>
-                    </div>
 
-                    {/* Sample diagnosis reveal */}
-                    {activeSample && (() => {
-                      const s = SAMPLES.find(s => s.id === activeSample);
-                      return s ? (
+                      {activeSampleData && (
                         <motion.div
                           initial={{ opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.2 }}
-                          className="rounded-md border border-primary/30 bg-primary/5 p-4"
+                          transition={{ delay: 0.15 }}
+                          className="rounded-lg border border-primary/30 bg-primary/10 p-4"
                         >
-                          <div className="data-label mb-1">Actual Diagnosis</div>
-                          <div className="font-semibold text-primary">{s.diagnosis}</div>
-                          <div className="text-xs text-muted-foreground mt-0.5">{s.subtext}</div>
+                          <div className="data-label mb-1">Demo diagnosis</div>
+                          <div className="font-semibold text-primary">
+                            {activeSampleData.diagnosis}
+                          </div>
+                          <div className="mt-1 text-xs text-muted-foreground">
+                            {activeSampleData.subtext}
+                          </div>
                         </motion.div>
-                      ) : null;
-                    })()}
+                      )}
 
-                    <p className="text-xs text-muted-foreground font-mono uppercase tracking-wider">
-                      Educational use only · not a diagnosis
-                    </p>
-                  </motion.div>
-                ) : loading ? (
-                  <motion.div
-                    key="loading"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-center py-16 gap-4"
-                  >
-                    <Loader2 className="h-8 w-8 text-primary animate-spin" />
-                    <div className="text-center">
-                      <p className="font-semibold">Running inference</p>
-                      <p className="text-sm text-muted-foreground mt-1">
-                        EfficientNetB0 · 224×224 · Metal GPU
-                      </p>
-                    </div>
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    key="empty"
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="flex flex-col items-center justify-center py-16 gap-3 text-center"
-                  >
-                    <div className="h-14 w-14 rounded-full border border-border flex items-center justify-center">
-                      <FileImage className="h-6 w-6 text-muted-foreground" />
-                    </div>
-                    <p className="text-sm text-muted-foreground max-w-xs">
-                      Select a patient above or upload your own scan to see results here.
-                    </p>
-                  </motion.div>
-                )}
-              </AnimatePresence>
+                      <div className="flex items-start gap-3 rounded-lg border border-[hsl(var(--amber)/0.45)] bg-[hsl(var(--amber)/0.15)] p-4 text-sm text-foreground">
+                        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0" />
+                        <p>
+                          This is a research demo. Do not use this output for
+                          medical diagnosis, triage, or treatment decisions.
+                        </p>
+                      </div>
+                    </motion.div>
+                  ) : loading ? (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="diagnostic-panel flex min-h-[440px] flex-col items-center justify-center gap-5 p-8 text-center text-white"
+                    >
+                      <Loader2 className="h-10 w-10 animate-spin text-[hsl(var(--aqua))]" />
+                      <div>
+                        <p className="text-lg font-semibold">Running inference</p>
+                        <p className="mt-2 text-sm text-white/60">
+                          TensorFlow · 224 x 224 · threshold 0.35
+                        </p>
+                      </div>
+                    </motion.div>
+                  ) : (
+                    <motion.div
+                      key="empty"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                      className="flex min-h-[440px] flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-secondary/50 p-8 text-center"
+                    >
+                      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white/70">
+                        <FileImage className="h-7 w-7 text-muted-foreground" />
+                      </div>
+                      <div>
+                        <p className="font-semibold">No scan analyzed yet</p>
+                        <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
+                          Select a patient sample above or upload a JPG/PNG CT
+                          slice to populate the readout.
+                        </p>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -4,124 +4,118 @@ import { motion } from "framer-motion";
 import Link from "next/link";
 import {
   ArrowRight,
-  Upload,
+  BrainCircuit,
   Cpu,
-  FileText,
-  Layers,
-  Network,
+  FileJson,
   Gauge,
+  Image as ImageIcon,
+  Layers,
+  Upload,
 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 const steps = [
   {
     icon: Upload,
     n: "01",
     title: "Upload",
-    body: "A CT slice is sent to the FastAPI backend as multipart form data.",
+    body: "The browser sends a JPG or PNG to the FastAPI backend as multipart form data.",
+  },
+  {
+    icon: ImageIcon,
+    n: "02",
+    title: "Validate",
+    body: "The API checks file extension, reads the image into memory, and rejects files above 10 MB.",
   },
   {
     icon: Layers,
-    n: "02",
+    n: "03",
     title: "Preprocess",
-    body: "Image is converted to grayscale, resized to 224×224, and normalized to [0, 1].",
+    body: "Pillow converts the image to grayscale, repeats it to RGB, and resizes it to 224 x 224.",
   },
   {
-    icon: Network,
-    n: "03",
-    title: "Convolution",
-    body: "A small CNN runs two Conv2D + MaxPool blocks followed by a dense head.",
+    icon: BrainCircuit,
+    n: "04",
+    title: "Infer",
+    body: "TensorFlow runs the Keras model and returns a raw score between 0 and 1.",
   },
   {
     icon: Gauge,
-    n: "04",
-    title: "Sigmoid",
-    body: "The final layer outputs a probability between 0 and 1.",
-  },
-  {
-    icon: FileText,
     n: "05",
     title: "Threshold",
-    body: "Scores above 0.5 are flagged. The raw score is returned for transparency.",
+    body: "Scores above 0.35 are labeled cancer; lower scores are labeled no_cancer.",
   },
   {
-    icon: Cpu,
+    icon: FileJson,
     n: "06",
-    title: "Response",
-    body: "JSON is returned with label, confidence, raw score, and threshold.",
+    title: "Respond",
+    body: "The API returns label, message, confidence, raw_score, and threshold as JSON.",
   },
 ];
 
 const compare = [
   {
-    title: "Traditional radiology",
-    bullets: [
-      "Days to weeks for scans to be reviewed",
-      "Subject to human fatigue and oversight",
-      "Limited specialist access in many regions",
-    ],
-    tone: "muted",
+    title: "What the model gives you",
+    body: "A binary educational classification, confidence value, raw score, and threshold.",
   },
   {
-    title: "AI-assisted screening",
-    bullets: [
-      "Sub-second inference per slice",
-      "Consistent baseline across millions of scans",
-      "Available anywhere there's a browser",
-    ],
-    tone: "primary",
+    title: "What it does not give you",
+    body: "A diagnosis, medical recommendation, stage assessment, or clinician-grade report.",
   },
 ];
 
 export default function HowItWorksPage() {
   return (
     <>
-      <section className="relative overflow-hidden border-b border-border/60">
-        <div className="absolute inset-0 grid-bg opacity-30 [mask-image:radial-gradient(ellipse_at_top,black_30%,transparent_75%)]" />
-        <div className="absolute inset-0 bg-radial-fade pointer-events-none" />
-        <div className="container relative pt-24 pb-20 text-center">
-          <Badge variant="default" className="mb-4">PIPELINE</Badge>
+      <section className="relative overflow-hidden bg-[hsl(var(--graphite))] text-white">
+        <div className="grid-bg absolute inset-0 opacity-25" />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_22%_18%,hsl(var(--aqua)_/_0.22),transparent_32%),radial-gradient(circle_at_86%_42%,hsl(var(--amber)_/_0.16),transparent_28%)]" />
+        <div className="container relative pt-24 pb-16 text-center">
+          <Badge className="mb-5 border-[hsl(var(--aqua)/0.3)] bg-[hsl(var(--aqua)/0.1)] text-[hsl(var(--aqua))]">
+            <Cpu className="h-3.5 w-3.5" />
+            Inference pipeline
+          </Badge>
           <motion.h1
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="text-4xl md:text-6xl font-bold tracking-tight"
+            className="mx-auto max-w-4xl text-4xl font-bold leading-tight md:text-6xl"
           >
-            How LungAI
-            <br />
-            <span className="text-primary text-glow">processes a scan.</span>
+            From CT slice to transparent model readout.
           </motion.h1>
-          <p className="mt-6 text-lg text-muted-foreground max-w-2xl mx-auto">
-            A trained CNN runs convolutional inference over a 224×224 grayscale
-            CT slice and returns a binary classification with a confidence score.
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-white/70">
+            LungAI keeps the pipeline intentionally visible: upload, validate,
+            preprocess, infer, threshold, and return a structured result.
           </p>
         </div>
       </section>
 
-      <section className="container py-20">
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <section className="container py-16">
+        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
           {steps.map((step, i) => {
             const Icon = step.icon;
             return (
               <motion.div
                 key={step.n}
-                initial={{ opacity: 0, y: 24 }}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: i * 0.06 }}
+                transition={{ duration: 0.4, delay: i * 0.05 }}
               >
-                <Card className="h-full">
-                  <CardContent className="pt-6">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="h-11 w-11 rounded-md bg-primary/10 border border-primary/30 flex items-center justify-center">
-                        <Icon className="h-5 w-5 text-primary" />
+                <Card className="h-full overflow-hidden">
+                  <CardContent className="p-6">
+                    <div className="mb-7 flex items-center justify-between">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-md bg-primary/10 text-primary">
+                        <Icon className="h-6 w-6" />
                       </div>
-                      <span className="data-label">{step.n}</span>
+                      <span className="font-mono text-sm text-muted-foreground">
+                        {step.n}
+                      </span>
                     </div>
-                    <h3 className="text-lg font-semibold mb-2">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">
+                    <h3 className="text-xl font-semibold">{step.title}</h3>
+                    <p className="mt-3 text-sm leading-6 text-muted-foreground">
                       {step.body}
                     </p>
                   </CardContent>
@@ -132,61 +126,32 @@ export default function HowItWorksPage() {
         </div>
       </section>
 
-      <section className="container py-20">
-        <div className="text-center mb-12">
-          <Badge variant="outline" className="mb-3">COMPARISON</Badge>
-          <h2 className="text-3xl md:text-4xl font-bold tracking-tight">
-            Why AI-assisted screening matters
-          </h2>
-        </div>
-        <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-          {compare.map((c) => (
-            <Card
-              key={c.title}
-              className={
-                c.tone === "primary"
-                  ? "border-primary/40 bg-primary/5"
-                  : ""
-              }
-            >
-              <CardContent className="pt-6">
-                <h3 className="text-lg font-semibold mb-4">{c.title}</h3>
-                <ul className="space-y-3">
-                  {c.bullets.map((b) => (
-                    <li
-                      key={b}
-                      className="flex items-start gap-3 text-sm text-muted-foreground"
-                    >
-                      <div
-                        className={`mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 ${
-                          c.tone === "primary" ? "bg-primary" : "bg-border"
-                        }`}
-                      />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
+      <section className="soft-band border-y border-border/70">
+        <div className="container grid gap-5 py-16 md:grid-cols-2">
+          {compare.map((item) => (
+            <Card key={item.title} className="bg-white/75">
+              <CardContent className="p-6">
+                <h2 className="text-2xl font-semibold">{item.title}</h2>
+                <p className="mt-3 leading-7 text-muted-foreground">{item.body}</p>
               </CardContent>
             </Card>
           ))}
         </div>
       </section>
 
-      <section className="container pb-24">
-        <div className="relative overflow-hidden rounded-2xl border border-primary/30 bg-card/40 p-12 text-center">
-          <div className="absolute inset-0 grid-bg opacity-20" />
-          <div className="absolute inset-0 bg-radial-fade" />
-          <div className="relative">
-            <h2 className="text-2xl md:text-3xl font-bold tracking-tight mb-3">
-              See it in action.
-            </h2>
-            <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-              Run the model against a CT slice and watch it return a confidence
-              score in real time.
-            </p>
-            <Button asChild size="lg">
+      <section className="container py-20">
+        <div className="dark-glass rounded-lg p-8 text-white md:p-12">
+          <div className="flex flex-col justify-between gap-6 md:flex-row md:items-center">
+            <div>
+              <p className="font-mono text-xs uppercase text-[hsl(var(--aqua))]">Try the loop</p>
+              <h2 className="mt-3 max-w-2xl text-3xl font-bold md:text-5xl">
+                Run the pipeline against a real sample scan.
+              </h2>
+            </div>
+            <Button asChild size="lg" className="bg-[hsl(var(--aqua))] text-primary hover:bg-[hsl(var(--background))]">
               <Link href="/test">
-                Open analyzer <ArrowRight className="h-4 w-4" />
+                Open analyzer
+                <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>
