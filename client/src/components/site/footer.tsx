@@ -3,17 +3,17 @@ import { Github, ScanLine, ShieldCheck } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="mt-auto border-t border-border bg-card">
+    <footer className="mt-auto border-t border-border clinical-band">
       <div className="container py-12">
         <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <div className="mb-4 flex items-center gap-2.5">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <ScanLine className="h-[18px] w-[18px]" />
+            <div className="mb-4 flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg border border-border bg-card text-primary">
+                <ScanLine className="h-[18px] w-[18px]" strokeWidth={1.75} />
               </div>
               <div>
-                <span className="text-base font-semibold text-foreground">
-                  Lung<span className="text-primary">AI</span>
+                <span className="text-[15px] font-medium text-foreground">
+                  LungAI
                 </span>
                 <p className="text-xs text-muted-foreground">
                   Open-source imaging demo
@@ -25,22 +25,20 @@ export function Footer() {
               scans. The model is experimental; the clinical disclaimer is not
               decorative.
             </p>
-            <div className="mt-4 inline-flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning-foreground">
-              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
-              Educational use only. Not a medical device.
+            <div className="disclaimer-banner mt-5 max-w-md">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />
+              <p>Educational use only. Not a medical device.</p>
             </div>
           </div>
 
           <div>
-            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Pages
-            </p>
+            <p className="mb-3 text-sm font-medium text-foreground">Pages</p>
             <ul className="space-y-2 text-sm">
               {[
                 { href: "/early-detection", label: "Early Detection" },
                 { href: "/how-it-works", label: "How It Works" },
                 { href: "/how-to-use", label: "How to Use" },
-                { href: "/test", label: "Analyze Scan" },
+                { href: "/test", label: "Analyze scan" },
               ].map((item) => (
                 <li key={item.href}>
                   <Link
@@ -55,9 +53,7 @@ export function Footer() {
           </div>
 
           <div>
-            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Resources
-            </p>
+            <p className="mb-3 text-sm font-medium text-foreground">Resources</p>
             <ul className="space-y-2 text-sm">
               <li>
                 <a
@@ -86,7 +82,7 @@ export function Footer() {
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
-                  <Github className="h-3.5 w-3.5" />
+                  <Github className="h-3.5 w-3.5" strokeWidth={1.75} />
                   Source
                 </a>
               </li>
@@ -94,9 +90,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-border pt-6 text-xs text-muted-foreground md:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-border/70 pt-6 text-xs text-muted-foreground md:flex-row">
           <p>© {new Date().getFullYear()} LungAI · MIT Licensed</p>
-          <p>No diagnosis · no clinical use</p>
+          <p>Not for diagnosis or clinical use</p>
         </div>
       </div>
     </footer>

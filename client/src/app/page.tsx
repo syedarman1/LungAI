@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import {
   ArrowRight,
   BrainCircuit,
@@ -18,7 +17,7 @@ const stats = [
   { value: "224", label: "Pixel input" },
   { value: "0.35", label: "Model threshold" },
   { value: "10 MB", label: "Upload limit" },
-  { value: "JPG/PNG", label: "Accepted files" },
+  { value: "JPG / PNG", label: "Accepted files" },
 ];
 
 const workflow = [
@@ -61,30 +60,26 @@ export default function Home() {
   return (
     <>
       <section className="border-b border-border bg-card">
-        <div className="container grid gap-12 py-16 md:grid-cols-2 md:items-center md:py-24">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45 }}
-          >
+        <div className="container grid gap-10 py-14 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-14 md:py-20">
+          <div>
             <Badge variant="secondary" className="mb-5">
-              Open-source medical AI demo
+              Educational imaging demo
             </Badge>
 
-            <h1 className="text-4xl font-semibold tracking-tight text-foreground md:text-5xl md:leading-tight">
-              Lung CT analysis that is clear, fast, and honest.
+            <h1 className="max-w-lg text-[2rem] font-medium leading-snug text-foreground md:text-[2.65rem] md:leading-tight">
+              Lung CT review, presented with clinical clarity.
             </h1>
 
-            <p className="mt-5 max-w-lg text-base leading-7 text-muted-foreground">
-              Upload a CT slice, run inference, and review the result with
-              confidence, threshold, and raw score in one focused view.
+            <p className="mt-5 max-w-md text-[15px] leading-7 text-muted-foreground">
+              Upload a slice, run inference, and review confidence, threshold,
+              and raw score in a layout modeled after a simple imaging readout.
             </p>
 
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild size="lg">
                 <Link href="/test">
-                  Analyze a scan
-                  <ArrowRight className="h-4 w-4" />
+                  Analyze scan
+                  <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
                 </Link>
               </Button>
               <Button asChild variant="outline" size="lg">
@@ -92,74 +87,79 @@ export default function Home() {
               </Button>
             </div>
 
-            <div className="disclaimer-banner mt-8 max-w-lg">
-              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
+            <div className="disclaimer-banner mt-8 max-w-md">
+              <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" strokeWidth={1.75} />
               <p>
                 Educational use only. LungAI is not a medical device and must
                 not be used for diagnosis or treatment decisions.
               </p>
             </div>
-          </motion.div>
+          </div>
 
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.45, delay: 0.1 }}
-            className="rounded-xl border border-border bg-background p-5 shadow-sm"
-          >
-            <div className="grid gap-4 md:grid-cols-[1fr_1fr]">
-              <div className="scan-viewer aspect-square">
-                <div className="absolute left-3 top-3 z-10 data-label text-white/60">
-                  Sample CT
+          <div className="readout-panel">
+            <div className="border-b border-border/70 px-4 py-3">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-sm font-medium text-foreground">Sample readout</p>
+                <Badge variant="secondary" className="text-[11px]">
+                  Example only
+                </Badge>
+              </div>
+              <p className="mt-1 text-xs text-muted-foreground">
+                Demo patient · axial slice · not a live result
+              </p>
+            </div>
+
+            <div className="grid gap-0 md:grid-cols-[1.1fr_0.9fr]">
+              <div className="border-b border-border/70 p-4 md:border-b-0 md:border-r">
+                <div className="scan-viewer aspect-square">
+                  <div className="absolute left-3 top-3 z-10 data-label text-white/55">
+                    Sample CT
+                  </div>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src="/samples/sample1.png"
+                    alt="Sample CT scan"
+                    className="absolute inset-0 h-full w-full object-contain p-5"
+                  />
                 </div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src="/samples/sample1.png"
-                  alt="Sample CT scan"
-                  className="absolute inset-0 h-full w-full object-contain p-6"
-                />
               </div>
 
-              <div className="flex flex-col gap-3">
-                <div className="rounded-lg border border-border bg-card p-4">
-                  <div className="flex items-center justify-between">
-                    <span className="data-label">Inference</span>
-                    <span className="text-xs font-medium text-success">Complete</span>
-                  </div>
-                  <div className="mt-3">
-                    <div className="text-3xl font-semibold text-foreground">91%</div>
-                    <div className="text-sm text-muted-foreground">Confidence</div>
-                  </div>
+              <div className="p-1">
+                <div className="readout-row">
+                  <span className="data-label">Status</span>
+                  <span className="text-sm font-medium text-success">Complete</span>
                 </div>
-
-                <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-lg border border-border bg-card p-3">
-                    <p className="data-label">Raw score</p>
-                    <p className="mt-1 font-mono text-sm font-medium">0.9187</p>
-                  </div>
-                  <div className="rounded-lg border border-border bg-card p-3">
-                    <p className="data-label">Threshold</p>
-                    <p className="mt-1 font-mono text-sm font-medium">0.35</p>
-                  </div>
+                <div className="readout-row">
+                  <span className="data-label">Confidence</span>
+                  <span className="font-mono text-lg font-medium text-foreground">91%</span>
                 </div>
-
-                <div className="rounded-lg border border-warning/30 bg-warning/10 px-3 py-2.5 text-xs text-warning-foreground">
-                  Flagged results should always be reviewed by a clinician.
+                <div className="readout-row">
+                  <span className="data-label">Raw score</span>
+                  <span className="font-mono text-sm text-foreground">0.9187</span>
+                </div>
+                <div className="readout-row">
+                  <span className="data-label">Threshold</span>
+                  <span className="font-mono text-sm text-foreground">0.35</span>
+                </div>
+                <div className="px-4 py-3">
+                  <p className="text-xs leading-5 text-warning-foreground">
+                    Flagged results should always be reviewed by a clinician.
+                  </p>
                 </div>
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      <section className="container py-16">
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
+      <section className="container py-12">
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
           {stats.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-xl border border-border bg-card px-4 py-4 text-center"
+              className="clinical-card px-4 py-4 text-center"
             >
-              <div className="font-mono text-xl font-semibold text-primary">
+              <div className="font-mono text-lg font-medium text-primary">
                 {stat.value}
               </div>
               <div className="mt-1 text-xs text-muted-foreground">{stat.label}</div>
@@ -168,19 +168,19 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-secondary/40">
-        <div className="container py-16 md:py-20">
-          <div className="mb-10 flex flex-col justify-between gap-4 md:flex-row md:items-end">
+      <section className="clinical-band">
+        <div className="container py-14 md:py-16">
+          <div className="mb-8 flex flex-col justify-between gap-4 md:flex-row md:items-end">
             <div>
-              <p className="section-label mb-2">Workflow</p>
-              <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-                Three steps, no friction.
+              <p className="section-label mb-1.5">Workflow</p>
+              <h2 className="text-xl font-medium text-foreground md:text-2xl">
+                Three steps to run the demo
               </h2>
             </div>
             <Button asChild variant="outline">
               <Link href="/how-to-use">
                 How to use it
-                <ArrowRight className="h-4 w-4" />
+                <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
               </Link>
             </Button>
           </div>
@@ -191,15 +191,15 @@ export default function Home() {
               return (
                 <Card key={step.title}>
                   <CardContent className="p-6">
-                    <div className="mb-5 flex items-center justify-between">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                        <Icon className="h-5 w-5" />
+                    <div className="mb-4 flex items-center justify-between">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-secondary/50 text-primary">
+                        <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
                       </div>
-                      <span className="font-mono text-sm text-muted-foreground">
-                        0{i + 1}
+                      <span className="font-mono text-xs text-muted-foreground">
+                        Step {i + 1}
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold">{step.title}</h3>
+                    <h3 className="font-medium text-foreground">{step.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">
                       {step.body}
                     </p>
@@ -211,10 +211,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="container py-16 md:py-20">
-        <p className="section-label mb-2">Why LungAI</p>
-        <h2 className="mb-8 max-w-xl text-2xl font-semibold tracking-tight md:text-3xl">
-          A simple backend, wrapped in a clear clinical experience.
+      <section className="container py-14 md:py-16">
+        <p className="section-label mb-1.5">Why LungAI</p>
+        <h2 className="mb-8 max-w-lg text-xl font-medium text-foreground md:text-2xl">
+          A simple backend, presented like a calm imaging review screen.
         </h2>
 
         <div className="grid gap-4 md:grid-cols-3">
@@ -223,8 +223,8 @@ export default function Home() {
             return (
               <Card key={feature.title}>
                 <CardContent className="p-6">
-                  <Icon className="mb-4 h-5 w-5 text-primary" />
-                  <h3 className="text-base font-semibold">{feature.title}</h3>
+                  <Icon className="mb-3 h-[18px] w-[18px] text-primary" strokeWidth={1.75} />
+                  <h3 className="font-medium text-foreground">{feature.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     {feature.body}
                   </p>
@@ -236,17 +236,17 @@ export default function Home() {
       </section>
 
       <section className="container pb-20">
-        <div className="rounded-xl border border-border bg-card p-8 md:flex md:items-center md:justify-between md:p-10">
+        <div className="clinical-card-accent flex flex-col gap-6 p-8 md:flex-row md:items-center md:justify-between md:p-10">
           <div>
-            <p className="section-label mb-2">Ready to try</p>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+            <p className="section-label mb-1.5">Ready to try</p>
+            <h2 className="text-xl font-medium text-foreground md:text-2xl">
               Open the analyzer and run a sample scan.
             </h2>
           </div>
-          <Button asChild size="lg" className="mt-6 shrink-0 md:mt-0">
+          <Button asChild size="lg" className="shrink-0">
             <Link href="/test">
-              Launch analyzer
-              <ArrowRight className="h-4 w-4" />
+              Analyze scan
+              <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </Link>
           </Button>
         </div>

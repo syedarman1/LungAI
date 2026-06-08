@@ -55,8 +55,8 @@ export default function EarlyDetectionPage() {
         badge={<AlertTriangle className="h-3 w-3" />}
         badgeLabel="Early detection context"
         align="center"
-        title="Faster signals are useful only when they stay responsible."
-        description="LungAI presents AI-assisted scan review as an educational workflow: quick to test, clear about uncertainty, and explicit that medical decisions belong with licensed clinicians."
+        title="Why early detection context matters for this demo."
+        description="LungAI presents scan review as an educational workflow: quick to test, clear about uncertainty, and explicit that medical decisions belong with licensed clinicians."
       />
 
       <section className="container py-12 md:py-16">
@@ -74,7 +74,7 @@ export default function EarlyDetectionPage() {
                 <Card className="h-full">
                   <CardContent className="p-6">
                     <Icon className="mb-4 h-6 w-6 text-primary" />
-                    <h3 className="text-lg font-semibold">{card.title}</h3>
+                    <h3 className="text-lg font-medium">{card.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">
                       {card.body}
                     </p>
@@ -90,7 +90,7 @@ export default function EarlyDetectionPage() {
         <div className="container py-12 md:py-16">
           <div className="mb-8 text-center">
             <p className="section-label mb-2">Responsible flow</p>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+            <h2 className="text-2xl font-medium tracking-tight md:text-3xl">
               From scan to next question.
             </h2>
           </div>
@@ -105,7 +105,7 @@ export default function EarlyDetectionPage() {
                     </span>
                     <TrendingUp className="h-4 w-4 text-primary" />
                   </div>
-                  <h3 className="text-lg font-semibold">{item.title}</h3>
+                  <h3 className="text-lg font-medium">{item.title}</h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     {item.body}
                   </p>
@@ -119,7 +119,7 @@ export default function EarlyDetectionPage() {
       <CtaBanner
         title="See the interface in action."
         description="Try a sample scan and inspect the model output without treating it like a diagnosis."
-        label="Analyze a scan"
+        label="Analyze scan"
       />
     </>
   );

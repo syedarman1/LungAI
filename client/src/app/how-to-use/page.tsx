@@ -52,8 +52,8 @@ export default function HowToUsePage() {
       <PageHeader
         badgeLabel="Guide"
         align="center"
-        title="A cleaner way to test the demo model."
-        description="No account. No dashboard maze. Pick a scan, run the analyzer, and read the model output in one place."
+        title="How to use the analyzer."
+        description="No account required. Select a sample scan or upload your own slice, then review the readout with confidence, threshold, and raw score."
       />
 
       <section className="container py-12 md:py-16">
@@ -78,7 +78,7 @@ export default function HowToUsePage() {
                         {step.n}
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold">{step.title}</h3>
+                    <h3 className="text-lg font-medium">{step.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">
                       {step.body}
                     </p>
@@ -94,7 +94,7 @@ export default function HowToUsePage() {
         <div className="container py-12 md:py-16">
           <div className="mb-8 text-center">
             <p className="section-label mb-2">FAQ</p>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+            <h2 className="text-2xl font-medium tracking-tight md:text-3xl">
               Before you upload.
             </h2>
           </div>
@@ -102,7 +102,7 @@ export default function HowToUsePage() {
             {faqs.map((item) => (
               <Card key={item.q}>
                 <CardContent className="p-6">
-                  <h3 className="text-base font-semibold">{item.q}</h3>
+                  <h3 className="text-base font-medium">{item.q}</h3>
                   <p className="mt-2 text-sm leading-6 text-muted-foreground">
                     {item.a}
                   </p>
@@ -113,7 +113,7 @@ export default function HowToUsePage() {
         </div>
       </section>
 
-      <CtaBanner title="Ready when you are." label="Open analyzer" />
+      <CtaBanner title="Ready when you are." />
     </>
   );
 }

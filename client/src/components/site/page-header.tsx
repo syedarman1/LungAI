@@ -1,7 +1,6 @@
 "use client";
 
 import type { ReactNode } from "react";
-import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -27,19 +26,14 @@ export function PageHeader({
   const centered = align === "center";
 
   return (
-    <section className={cn("border-b border-border bg-card", className)}>
+    <section className={cn("clinical-band", className)}>
       <div
         className={cn(
-          "container py-12 md:py-16",
+          "container py-11 md:py-14",
           centered && "text-center"
         )}
       >
-        <motion.div
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
-          className={cn(centered && "mx-auto max-w-3xl")}
-        >
+        <div className={cn(centered && "mx-auto max-w-3xl")}>
           {(badge || badgeLabel) && (
             <Badge variant="secondary" className="mb-4">
               {badge}
@@ -47,14 +41,14 @@ export function PageHeader({
             </Badge>
           )}
 
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground md:text-5xl md:leading-tight">
+          <h1 className="text-3xl font-medium leading-snug text-foreground md:text-[2.5rem] md:leading-tight">
             {title}
           </h1>
 
           {description && (
             <p
               className={cn(
-                "mt-4 text-base leading-7 text-muted-foreground md:text-lg",
+                "mt-4 text-base leading-7 text-muted-foreground",
                 centered ? "mx-auto max-w-2xl" : "max-w-2xl"
               )}
             >
@@ -63,7 +57,7 @@ export function PageHeader({
           )}
 
           {children && <div className="mt-6">{children}</div>}
-        </motion.div>
+        </div>
       </div>
     </section>
   );

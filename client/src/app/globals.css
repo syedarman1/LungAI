@@ -4,41 +4,42 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 17%;
+    /* Soft Clinical — warm ivory + muted slate blue */
+    --background: 40 18% 97%;
+    --foreground: 215 16% 32%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 25% 17%;
+    --card: 40 22% 99%;
+    --card-foreground: 215 16% 32%;
 
-    --primary: 173 58% 39%;
-    --primary-foreground: 0 0% 100%;
+    --primary: 210 26% 46%;
+    --primary-foreground: 40 22% 99%;
 
-    --secondary: 210 16% 94%;
-    --secondary-foreground: 215 25% 17%;
+    --secondary: 210 16% 92%;
+    --secondary-foreground: 215 16% 32%;
 
-    --muted: 210 16% 94%;
-    --muted-foreground: 215 14% 46%;
+    --muted: 210 14% 91%;
+    --muted-foreground: 215 10% 46%;
 
-    --accent: 173 40% 94%;
-    --accent-foreground: 173 58% 30%;
+    --accent: 210 22% 90%;
+    --accent-foreground: 210 26% 36%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 100%;
+    --destructive: 5 38% 52%;
+    --destructive-foreground: 40 22% 99%;
 
-    --success: 142 64% 36%;
-    --success-foreground: 0 0% 100%;
+    --success: 152 18% 42%;
+    --success-foreground: 40 22% 99%;
 
-    --warning: 32 95% 44%;
-    --warning-foreground: 32 95% 20%;
+    --warning: 38 48% 58%;
+    --warning-foreground: 38 35% 28%;
 
-    --border: 214 20% 90%;
-    --input: 214 20% 90%;
-    --ring: 173 58% 39%;
+    --border: 210 14% 86%;
+    --input: 210 14% 86%;
+    --ring: 210 26% 46%;
 
-    --radius: 0.625rem;
+    --radius: 0.75rem;
 
-    --viewer: 215 22% 14%;
-    --viewer-border: 215 16% 24%;
+    --viewer: 215 16% 22%;
+    --viewer-border: 215 12% 34%;
   }
 
   * {
@@ -69,25 +70,45 @@
   }
 
   ::selection {
-    background: hsl(var(--primary) / 0.15);
+    background: hsl(var(--primary) / 0.12);
     color: hsl(var(--foreground));
   }
 }
 
 @layer components {
   .section-label {
-    @apply text-xs font-medium uppercase tracking-wider text-primary;
+    @apply text-sm font-medium text-primary;
   }
 
   .data-label {
-    @apply text-[11px] font-medium uppercase tracking-wide text-muted-foreground;
+    @apply text-xs text-muted-foreground;
+  }
+
+  .clinical-band {
+    @apply border-y border-border bg-secondary/60;
+  }
+
+  .clinical-card {
+    @apply rounded-xl border border-border bg-card shadow-[0_1px_2px_hsl(var(--foreground)/0.04)];
+  }
+
+  .clinical-card-accent {
+    @apply clinical-card border-l-[3px] border-l-primary/35;
   }
 
   .scan-viewer {
     @apply relative overflow-hidden rounded-lg border border-[hsl(var(--viewer-border))] bg-[hsl(var(--viewer))];
   }
 
+  .readout-panel {
+    @apply rounded-xl border border-border bg-card p-1;
+  }
+
+  .readout-row {
+    @apply flex items-center justify-between border-b border-border/70 px-4 py-3 last:border-b-0;
+  }
+
   .disclaimer-banner {
-    @apply flex items-start gap-3 rounded-lg border border-warning/30 bg-warning/10 px-4 py-3 text-sm text-warning-foreground;
+    @apply flex items-start gap-3 rounded-lg border border-warning/25 bg-[hsl(38_48%_58%/0.12)] px-4 py-3 text-sm text-warning-foreground;
   }
 }

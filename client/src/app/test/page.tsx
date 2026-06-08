@@ -157,6 +157,8 @@ export default function TestPage() {
 
   const isCancer = result?.label === "cancer";
   const confidencePct = result ? Math.round(result.confidence * 100) : 0;
+  const resultLabel =
+    result?.label === "cancer" ? "flagged finding" : "no finding";
   const activeSampleData = activeSample
     ? SAMPLES.find((sample) => sample.id === activeSample)
     : null;
@@ -165,14 +167,14 @@ export default function TestPage() {
     <>
       <PageHeader
         badgeLabel="Analyzer"
-        title="Upload a scan. Review the result."
-        description="Select a demo patient or upload your own CT slice. LungAI keeps the raw score, threshold, and confidence visible so every result is easy to inspect."
+        title="Upload a scan, review the readout."
+        description="Select a demo patient or upload your own CT slice. Confidence, threshold, and raw score stay visible throughout."
       >
-        <div className="grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="grid max-w-xl grid-cols-2 gap-2.5 sm:grid-cols-4">
           {MODEL_STATS.map((stat) => (
             <div
               key={stat.label}
-              className="rounded-lg border border-border bg-background px-3 py-2.5"
+              className="clinical-card px-3 py-2.5"
             >
               <p className="data-label">{stat.label}</p>
               <p className="mt-1 font-mono text-xs font-medium">{stat.value}</p>
@@ -181,13 +183,13 @@ export default function TestPage() {
         </div>
       </PageHeader>
 
-      <section className="border-b border-border bg-secondary/30">
+      <section className="clinical-band">
         <div className="container py-8">
-          <div className="mb-4 flex items-center gap-2">
-            <FlaskConical className="h-4 w-4 text-primary" />
-            <span className="text-sm font-medium">Sample scans</span>
+          <div className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1">
+            <FlaskConical className="h-4 w-4 text-primary" strokeWidth={1.75} />
+            <span className="text-sm font-medium text-foreground">Sample scans</span>
             <span className="text-sm text-muted-foreground">
-              Click one to run inference instantly.
+              Select a patient to run inference.
             </span>
           </div>
 
@@ -201,20 +203,20 @@ export default function TestPage() {
                 className={cn(
                   "group relative aspect-square overflow-hidden rounded-lg border bg-[hsl(var(--viewer))] text-left transition-colors",
                   activeSample === sample.id
-                    ? "border-primary ring-2 ring-primary/20"
-                    : "border-border hover:border-primary/40"
+                    ? "border-primary/50 ring-1 ring-primary/15"
+                    : "border-border hover:border-primary/30"
                 )}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={sample.src}
                   alt={sample.hint}
-                  className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
+                  className="h-full w-full object-cover opacity-85 transition-opacity group-hover:opacity-100"
                 />
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2.5 pb-2 pt-8">
                   <p className="text-xs font-medium text-white">{sample.hint}</p>
                   <p className="truncate text-[11px] text-white/70">
-                    {sample.diagnosis}
+                    {sample.diagnosis} · demo label
                   </p>
                 </div>
                 {activeSample === sample.id && loading && (
@@ -244,7 +246,7 @@ export default function TestPage() {
               <div className="flex items-center justify-between border-b border-border px-6 py-4">
                 <div>
                   <p className="section-label">Input</p>
-                  <h2 className="mt-0.5 text-lg font-semibold">Patient image</h2>
+                  <h2 className="mt-0.5 font-medium text-foreground">Patient image</h2>
                 </div>
                 {(file || previewUrl) && (
                   <button
@@ -267,10 +269,10 @@ export default function TestPage() {
                     onDragLeave={() => setIsDragging(false)}
                     onDrop={handleDrop}
                     className={cn(
-                      "relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-secondary/50 transition-colors",
+                      "relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-secondary/40 transition-colors",
                       isDragging
-                        ? "border-primary bg-accent"
-                        : "border-border hover:border-primary/50 hover:bg-accent/50"
+                        ? "border-primary/40 bg-accent"
+                        : "border-border hover:border-primary/25 hover:bg-accent/60"
                     )}
                   >
                     <input
@@ -350,9 +352,20 @@ export default function TestPage() {
                   </Button>
                 </div>
 
-                <p className="mt-4 break-all rounded-md bg-secondary px-3 py-2 font-mono text-xs text-muted-foreground">
-                  Endpoint: {API_URL}/predict
-                </p>
+                {activeSample && (
+                  <p className="mt-3 text-xs text-muted-foreground">
+                    Reset to upload your own scan.
+                  </p>
+                )}
+
+                <details className="mt-4 rounded-lg border border-border/70 bg-secondary/40 px-3 py-2">
+                  <summary className="cursor-pointer text-xs font-medium text-muted-foreground">
+                    Developer info
+                  </summary>
+                  <p className="mt-2 break-all font-mono text-xs text-muted-foreground">
+                    Endpoint: {API_URL}/predict
+                  </p>
+                </details>
               </div>
             </CardContent>
           </Card>
@@ -362,11 +375,11 @@ export default function TestPage() {
               <div className="flex items-center justify-between border-b border-border px-6 py-4">
                 <div>
                   <p className="section-label">Output</p>
-                  <h2 className="mt-0.5 text-lg font-semibold">Result readout</h2>
+                  <h2 className="mt-0.5 font-medium text-foreground">Result readout</h2>
                 </div>
                 {result && (
                   <Badge variant={isCancer ? "destructive" : "success"}>
-                    {result.label.replace("_", " ")}
+                    {resultLabel}
                   </Badge>
                 )}
               </div>
@@ -419,7 +432,7 @@ export default function TestPage() {
                             <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-success" />
                           )}
                           <div>
-                            <p className={cn("text-lg font-semibold", isCancer ? "text-destructive" : "text-success")}>
+                            <p className={cn("font-medium", isCancer ? "text-destructive" : "text-success")}>
                               {isCancer ? "Anomaly detected" : "No anomaly detected"}
                             </p>
                             <p className="mt-1 text-sm leading-6 text-muted-foreground">
@@ -437,7 +450,7 @@ export default function TestPage() {
                               Relative to the selected classification.
                             </p>
                           </div>
-                          <span className="font-mono text-3xl font-semibold text-foreground">
+                          <span className="font-mono text-2xl font-medium text-foreground">
                             {confidencePct}%
                           </span>
                         </div>
@@ -453,7 +466,7 @@ export default function TestPage() {
                             <Activity className="h-4 w-4" />
                             <span className="data-label">Raw score</span>
                           </div>
-                          <div className="mt-2 font-mono text-xl font-semibold">
+                          <div className="mt-2 font-mono text-lg font-medium">
                             {result.raw_score.toFixed(4)}
                           </div>
                         </div>
@@ -462,7 +475,7 @@ export default function TestPage() {
                             <Gauge className="h-4 w-4" />
                             <span className="data-label">Threshold</span>
                           </div>
-                          <div className="mt-2 font-mono text-xl font-semibold">
+                          <div className="mt-2 font-mono text-lg font-medium">
                             {result.threshold.toFixed(2)}
                           </div>
                         </div>
@@ -470,13 +483,19 @@ export default function TestPage() {
 
                       {activeSampleData && (
                         <div className="rounded-lg border border-border bg-accent/50 p-4">
-                          <div className="data-label mb-1">Demo diagnosis</div>
+                          <div className="data-label mb-1">
+                            Sample metadata (for demo comparison only)
+                          </div>
                           <div className="font-medium text-accent-foreground">
                             {activeSampleData.diagnosis}
                           </div>
                           <div className="mt-1 text-xs text-muted-foreground">
                             {activeSampleData.subtext}
                           </div>
+                          <p className="mt-2 text-xs leading-5 text-muted-foreground">
+                            This label describes the demo dataset, not a diagnosis
+                            returned by the model.
+                          </p>
                         </div>
                       )}
 

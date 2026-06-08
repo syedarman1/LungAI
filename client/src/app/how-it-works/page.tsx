@@ -43,7 +43,7 @@ const steps = [
     icon: Gauge,
     n: "05",
     title: "Threshold",
-    body: "Scores above 0.35 are labeled cancer; lower scores are labeled no_cancer.",
+    body: "Scores above 0.35 are flagged as a potential finding; lower scores are reported as no finding detected.",
   },
   {
     icon: FileJson,
@@ -97,7 +97,7 @@ export default function HowItWorksPage() {
                         {step.n}
                       </span>
                     </div>
-                    <h3 className="text-lg font-semibold">{step.title}</h3>
+                    <h3 className="text-lg font-medium">{step.title}</h3>
                     <p className="mt-2 text-sm leading-6 text-muted-foreground">
                       {step.body}
                     </p>
@@ -114,7 +114,7 @@ export default function HowItWorksPage() {
           {compare.map((item) => (
             <Card key={item.title}>
               <CardContent className="p-6">
-                <h2 className="text-xl font-semibold">{item.title}</h2>
+                <h2 className="text-xl font-medium">{item.title}</h2>
                 <p className="mt-2 leading-7 text-muted-foreground">{item.body}</p>
               </CardContent>
             </Card>
@@ -123,8 +123,7 @@ export default function HowItWorksPage() {
       </section>
 
       <CtaBanner
-        title="Run the pipeline against a real sample scan."
-        label="Open analyzer"
+        title="Run the pipeline against a sample scan."
       />
     </>
   );
