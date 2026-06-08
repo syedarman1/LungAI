@@ -19,9 +19,9 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "LungAI · AI-Assisted Lung CT Analysis",
+  title: "LungAI · Lung CT Analysis Demo",
   description:
-    "An open-source educational demo for AI-assisted analysis of lung CT scans. Upload a slice and see a preliminary risk assessment.",
+    "An open-source educational demo for lung CT slice analysis. Upload a scan, review model output, and read confidence, threshold, and raw score in a clear clinical layout.",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -31,7 +31,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased min-h-screen flex flex-col`}
       >
         <Navbar />
-        <main className="flex-1 pt-16">{children}</main>
+        <main className="flex-1 pt-[4.25rem]">{children}</main>
         <Footer />
       </body>
     </html>
