@@ -12,7 +12,6 @@ import {
   Gauge,
   Loader2,
   RotateCcw,
-  ScanLine,
   ShieldCheck,
   Upload,
   X,
@@ -21,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { PageHeader } from "@/components/site/page-header";
 import { cn } from "@/lib/utils";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
@@ -44,7 +44,7 @@ const SAMPLES = [
 
 const MODEL_STATS = [
   { label: "Architecture", value: "EfficientNetB0" },
-  { label: "Input", value: "224 x 224" },
+  { label: "Input", value: "224 × 224" },
   { label: "Threshold", value: "0.35" },
   { label: "Max file", value: "10 MB" },
 ];
@@ -163,45 +163,29 @@ export default function TestPage() {
 
   return (
     <>
-      <section className="relative overflow-hidden bg-[hsl(var(--graphite))] text-white">
-        <div className="grid-bg absolute inset-0 opacity-25" />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_24%_16%,hsl(var(--aqua)_/_0.2),transparent_34%),radial-gradient(circle_at_86%_20%,hsl(var(--amber)_/_0.18),transparent_28%)]" />
-        <div className="container relative pt-24 pb-12">
-          <div className="flex flex-col justify-between gap-8 lg:flex-row lg:items-end">
-            <div className="max-w-3xl">
-              <Badge className="mb-5 border-[hsl(var(--aqua)/0.3)] bg-[hsl(var(--aqua)/0.1)] text-[hsl(var(--aqua))]">
-                <ScanLine className="h-3.5 w-3.5" />
-                Analyzer command center
-              </Badge>
-              <h1 className="text-4xl font-bold leading-tight md:text-6xl">
-                Upload a scan. Watch the model think.
-              </h1>
-              <p className="mt-5 max-w-2xl text-base leading-7 text-white/70">
-                Select a demo patient or upload your own CT slice. LungAI keeps
-                the raw score, threshold, and confidence visible so every result
-                is easy to inspect.
-              </p>
+      <PageHeader
+        badgeLabel="Analyzer"
+        title="Upload a scan. Review the result."
+        description="Select a demo patient or upload your own CT slice. LungAI keeps the raw score, threshold, and confidence visible so every result is easy to inspect."
+      >
+        <div className="grid max-w-lg grid-cols-2 gap-3 sm:grid-cols-4">
+          {MODEL_STATS.map((stat) => (
+            <div
+              key={stat.label}
+              className="rounded-lg border border-border bg-background px-3 py-2.5"
+            >
+              <p className="data-label">{stat.label}</p>
+              <p className="mt-1 font-mono text-xs font-medium">{stat.value}</p>
             </div>
-
-            <div className="grid min-w-[280px] grid-cols-2 gap-3">
-              {MODEL_STATS.map((stat) => (
-                <div key={stat.label} className="rounded-lg border border-white/10 bg-white/10 p-3">
-                  <p className="font-mono text-[10px] uppercase text-white/50">
-                    {stat.label}
-                  </p>
-                  <p className="mt-1 font-mono text-sm text-[hsl(var(--aqua))]">{stat.value}</p>
-                </div>
-              ))}
-            </div>
-          </div>
+          ))}
         </div>
-      </section>
+      </PageHeader>
 
-      <section className="soft-band border-b border-border/70">
+      <section className="border-b border-border bg-secondary/30">
         <div className="container py-8">
-          <div className="mb-5 flex items-center gap-2">
+          <div className="mb-4 flex items-center gap-2">
             <FlaskConical className="h-4 w-4 text-primary" />
-            <span className="font-semibold">Sample scans</span>
+            <span className="text-sm font-medium">Sample scans</span>
             <span className="text-sm text-muted-foreground">
               Click one to run inference instantly.
             </span>
@@ -209,65 +193,63 @@ export default function TestPage() {
 
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6">
             {SAMPLES.map((sample) => (
-              <motion.button
+              <button
                 key={sample.id}
-                whileHover={{ y: -3 }}
-                whileTap={{ scale: 0.98 }}
+                type="button"
                 onClick={() => handleSample(sample)}
                 disabled={loading}
                 className={cn(
-                  "group relative aspect-square overflow-hidden rounded-lg border bg-[hsl(var(--graphite))] text-left shadow-[0_18px_42px_-32px_hsl(var(--graphite)_/_0.75)]",
+                  "group relative aspect-square overflow-hidden rounded-lg border bg-[hsl(var(--viewer))] text-left transition-colors",
                   activeSample === sample.id
-                    ? "border-primary ring-2 ring-primary/30"
-                    : "border-white/10 hover:border-primary/50"
+                    ? "border-primary ring-2 ring-primary/20"
+                    : "border-border hover:border-primary/40"
                 )}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={sample.src}
                   alt={sample.hint}
-                  className="h-full w-full object-cover opacity-70 grayscale transition-all group-hover:scale-105 group-hover:opacity-95 group-hover:grayscale-0"
+                  className="h-full w-full object-cover opacity-80 transition-opacity group-hover:opacity-100"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute bottom-2 left-2 right-2">
-                  <p className="font-mono text-xs text-white">{sample.hint}</p>
-                  <p className="mt-0.5 truncate text-[11px] text-white/60">
+                <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/70 to-transparent px-2.5 pb-2 pt-8">
+                  <p className="text-xs font-medium text-white">{sample.hint}</p>
+                  <p className="truncate text-[11px] text-white/70">
                     {sample.diagnosis}
                   </p>
                 </div>
                 {activeSample === sample.id && loading && (
                   <div className="absolute inset-0 flex items-center justify-center bg-black/40">
-                    <Loader2 className="h-5 w-5 animate-spin text-[hsl(var(--aqua))]" />
+                    <Loader2 className="h-5 w-5 animate-spin text-white" />
                   </div>
                 )}
                 {activeSample === sample.id && result && (
-                  <div className="absolute right-2 top-2 rounded-full bg-black/50 p-1.5">
+                  <div className="absolute right-2 top-2 rounded-full bg-black/50 p-1">
                     {isCancer ? (
-                      <AlertTriangle className="h-4 w-4 text-red-300" />
+                      <AlertTriangle className="h-3.5 w-3.5 text-destructive" />
                     ) : (
-                      <CheckCircle2 className="h-4 w-4 text-[hsl(var(--success))]" />
+                      <CheckCircle2 className="h-3.5 w-3.5 text-success" />
                     )}
                   </div>
                 )}
-              </motion.button>
+              </button>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="container py-12">
-        <div className="grid gap-6 lg:grid-cols-[1.02fr_0.98fr]">
-          <Card className="overflow-hidden border-primary/20">
+      <section className="container py-10 md:py-12">
+        <div className="grid gap-6 lg:grid-cols-2">
+          <Card>
             <CardContent className="p-0">
-              <div className="flex items-center justify-between border-b border-border/70 px-6 py-4">
+              <div className="flex items-center justify-between border-b border-border px-6 py-4">
                 <div>
-                  <p className="section-kicker">Input scan</p>
-                  <h2 className="mt-1 text-xl font-semibold">Patient image</h2>
+                  <p className="section-label">Input</p>
+                  <h2 className="mt-0.5 text-lg font-semibold">Patient image</h2>
                 </div>
                 {(file || previewUrl) && (
                   <button
                     onClick={reset}
-                    className="rounded-md p-2 text-muted-foreground hover:bg-secondary hover:text-destructive"
+                    className="rounded-md p-2 text-muted-foreground transition-colors hover:bg-secondary hover:text-destructive"
                     aria-label="Reset"
                   >
                     <X className="h-4 w-4" />
@@ -285,10 +267,10 @@ export default function TestPage() {
                     onDragLeave={() => setIsDragging(false)}
                     onDrop={handleDrop}
                     className={cn(
-                      "relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center overflow-hidden rounded-lg border-2 border-dashed bg-[hsl(var(--graphite))] text-white",
+                      "relative flex aspect-[4/3] cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-secondary/50 transition-colors",
                       isDragging
-                        ? "border-[hsl(var(--aqua))] shadow-[0_0_0_6px_hsl(var(--aqua)_/_0.14)]"
-                        : "border-[hsl(var(--aqua)/0.25)] hover:border-[hsl(var(--aqua)/0.6)]"
+                        ? "border-primary bg-accent"
+                        : "border-border hover:border-primary/50 hover:bg-accent/50"
                     )}
                   >
                     <input
@@ -297,42 +279,41 @@ export default function TestPage() {
                       onChange={handleFileInput}
                       className="sr-only"
                     />
-                    <div className="grid-bg absolute inset-0 opacity-25" />
-                    <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-                      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-[hsl(var(--aqua)/0.3)] bg-[hsl(var(--aqua)/0.1)]">
-                        <Upload className="h-7 w-7 text-[hsl(var(--aqua))]" />
+                    <div className="flex flex-col items-center gap-3 text-center">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+                        <Upload className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="text-base font-semibold">
+                        <p className="text-sm font-medium">
                           Drop CT image here, or browse
                         </p>
-                        <p className="mt-2 font-mono text-xs uppercase text-white/60">
+                        <p className="mt-1 text-xs text-muted-foreground">
                           JPG or PNG · 10 MB max
                         </p>
                       </div>
                     </div>
                   </label>
                 ) : (
-                  <div className={cn("scan-frame aspect-[4/3]", loading && "shadow-[0_0_0_6px_hsl(var(--aqua)_/_0.12)]")}>
-                    <div className="absolute left-4 top-3 z-10 data-label text-[hsl(var(--aqua))]/70">
+                  <div className={cn("scan-viewer aspect-[4/3]", loading && "ring-2 ring-primary/20")}>
+                    <div className="absolute left-3 top-3 z-10 data-label text-white/60">
                       {activeSampleData?.hint || file?.name.slice(0, 24)}
                     </div>
-                    <div className="absolute right-4 top-3 z-10 data-label text-[hsl(var(--aqua))]/70">
+                    <div className="absolute right-3 top-3 z-10 data-label text-white/60">
                       {file && `${(file.size / 1024).toFixed(0)} KB`}
                     </div>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src={previewUrl}
                       alt="CT scan preview"
-                      className="absolute inset-0 h-full w-full object-contain p-8"
+                      className="absolute inset-0 h-full w-full object-contain p-6"
                     />
-                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/70 to-transparent px-4 py-4">
-                      <span className="inline-flex items-center gap-1.5 font-mono text-xs uppercase text-white/70">
+                    <div className="absolute inset-x-0 bottom-0 flex items-center justify-between border-t border-white/10 bg-black/50 px-4 py-3">
+                      <span className="inline-flex items-center gap-1.5 text-xs text-white/70">
                         <FileImage className="h-3.5 w-3.5" />
                         {activeSample ? "Demo scan" : "Uploaded scan"}
                       </span>
-                      <span className="font-mono text-xs uppercase text-[hsl(var(--aqua))]">
-                        {loading ? "Analyzing" : result ? "Complete" : "Ready"}
+                      <span className="text-xs font-medium text-white/90">
+                        {loading ? "Analyzing…" : result ? "Complete" : "Ready"}
                       </span>
                     </div>
                   </div>
@@ -369,19 +350,19 @@ export default function TestPage() {
                   </Button>
                 </div>
 
-                <p className="mt-4 break-all rounded-md bg-secondary/70 px-3 py-2 font-mono text-xs text-muted-foreground">
+                <p className="mt-4 break-all rounded-md bg-secondary px-3 py-2 font-mono text-xs text-muted-foreground">
                   Endpoint: {API_URL}/predict
                 </p>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="overflow-hidden border-primary/20">
+          <Card>
             <CardContent className="p-0">
-              <div className="flex items-center justify-between border-b border-border/70 px-6 py-4">
+              <div className="flex items-center justify-between border-b border-border px-6 py-4">
                 <div>
-                  <p className="section-kicker">Output</p>
-                  <h2 className="mt-1 text-xl font-semibold">Result readout</h2>
+                  <p className="section-label">Output</p>
+                  <h2 className="mt-0.5 text-lg font-semibold">Result readout</h2>
                 </div>
                 {result && (
                   <Badge variant={isCancer ? "destructive" : "success"}>
@@ -398,12 +379,12 @@ export default function TestPage() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="rounded-lg border border-destructive/40 bg-destructive/10 p-5"
+                      className="rounded-lg border border-destructive/30 bg-destructive/5 p-5"
                     >
                       <div className="flex items-start gap-3">
                         <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
                         <div>
-                          <p className="font-semibold text-destructive">
+                          <p className="font-medium text-destructive">
                             Inference failed
                           </p>
                           <p className="mt-1 text-sm text-muted-foreground">
@@ -421,24 +402,24 @@ export default function TestPage() {
                       initial={{ opacity: 0, y: 8 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0 }}
-                      className="space-y-5"
+                      className="space-y-4"
                     >
                       <div
                         className={cn(
                           "rounded-lg border p-5",
                           isCancer
-                            ? "border-destructive/40 bg-destructive/10"
-                            : "border-success/40 bg-success/10"
+                            ? "border-destructive/30 bg-destructive/5"
+                            : "border-success/30 bg-success/5"
                         )}
                       >
-                        <div className="flex items-start gap-4">
+                        <div className="flex items-start gap-3">
                           {isCancer ? (
-                            <AlertTriangle className="mt-0.5 h-7 w-7 shrink-0 text-destructive" />
+                            <AlertTriangle className="mt-0.5 h-6 w-6 shrink-0 text-destructive" />
                           ) : (
-                            <CheckCircle2 className="mt-0.5 h-7 w-7 shrink-0 text-success" />
+                            <CheckCircle2 className="mt-0.5 h-6 w-6 shrink-0 text-success" />
                           )}
                           <div>
-                            <p className={cn("text-xl font-semibold", isCancer ? "text-destructive" : "text-success")}>
+                            <p className={cn("text-lg font-semibold", isCancer ? "text-destructive" : "text-success")}>
                               {isCancer ? "Anomaly detected" : "No anomaly detected"}
                             </p>
                             <p className="mt-1 text-sm leading-6 text-muted-foreground">
@@ -448,15 +429,15 @@ export default function TestPage() {
                         </div>
                       </div>
 
-                      <div className="rounded-lg border border-border bg-secondary/50 p-5">
+                      <div className="rounded-lg border border-border bg-secondary/40 p-5">
                         <div className="mb-3 flex items-end justify-between">
                           <div>
-                            <p className="section-kicker">Confidence</p>
-                            <p className="mt-1 text-sm text-muted-foreground">
+                            <p className="section-label">Confidence</p>
+                            <p className="mt-0.5 text-xs text-muted-foreground">
                               Relative to the selected classification.
                             </p>
                           </div>
-                          <span className="font-mono text-4xl font-bold text-primary">
+                          <span className="font-mono text-3xl font-semibold text-foreground">
                             {confidencePct}%
                           </span>
                         </div>
@@ -467,45 +448,40 @@ export default function TestPage() {
                       </div>
 
                       <div className="grid grid-cols-2 gap-3">
-                        <div className="rounded-lg border border-border bg-white/70 p-4">
+                        <div className="rounded-lg border border-border bg-card p-4">
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <Activity className="h-4 w-4" />
                             <span className="data-label">Raw score</span>
                           </div>
-                          <div className="mt-2 font-mono text-2xl font-semibold">
+                          <div className="mt-2 font-mono text-xl font-semibold">
                             {result.raw_score.toFixed(4)}
                           </div>
                         </div>
-                        <div className="rounded-lg border border-border bg-white/70 p-4">
+                        <div className="rounded-lg border border-border bg-card p-4">
                           <div className="flex items-center gap-2 text-muted-foreground">
                             <Gauge className="h-4 w-4" />
                             <span className="data-label">Threshold</span>
                           </div>
-                          <div className="mt-2 font-mono text-2xl font-semibold">
+                          <div className="mt-2 font-mono text-xl font-semibold">
                             {result.threshold.toFixed(2)}
                           </div>
                         </div>
                       </div>
 
                       {activeSampleData && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 6 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          transition={{ delay: 0.15 }}
-                          className="rounded-lg border border-primary/30 bg-primary/10 p-4"
-                        >
+                        <div className="rounded-lg border border-border bg-accent/50 p-4">
                           <div className="data-label mb-1">Demo diagnosis</div>
-                          <div className="font-semibold text-primary">
+                          <div className="font-medium text-accent-foreground">
                             {activeSampleData.diagnosis}
                           </div>
                           <div className="mt-1 text-xs text-muted-foreground">
                             {activeSampleData.subtext}
                           </div>
-                        </motion.div>
+                        </div>
                       )}
 
-                      <div className="flex items-start gap-3 rounded-lg border border-[hsl(var(--amber)/0.45)] bg-[hsl(var(--amber)/0.15)] p-4 text-sm text-foreground">
-                        <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0" />
+                      <div className="disclaimer-banner">
+                        <ShieldCheck className="mt-0.5 h-4 w-4 shrink-0" />
                         <p>
                           This is a research demo. Do not use this output for
                           medical diagnosis, triage, or treatment decisions.
@@ -518,13 +494,13 @@ export default function TestPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="diagnostic-panel flex min-h-[440px] flex-col items-center justify-center gap-5 p-8 text-center text-white"
+                      className="flex min-h-[400px] flex-col items-center justify-center gap-4 rounded-lg border border-border bg-secondary/30 p-8 text-center"
                     >
-                      <Loader2 className="h-10 w-10 animate-spin text-[hsl(var(--aqua))]" />
+                      <Loader2 className="h-8 w-8 animate-spin text-primary" />
                       <div>
-                        <p className="text-lg font-semibold">Running inference</p>
-                        <p className="mt-2 text-sm text-white/60">
-                          TensorFlow · 224 x 224 · threshold 0.35
+                        <p className="font-medium">Running inference</p>
+                        <p className="mt-1 text-sm text-muted-foreground">
+                          TensorFlow · 224 × 224 · threshold 0.35
                         </p>
                       </div>
                     </motion.div>
@@ -534,14 +510,14 @@ export default function TestPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex min-h-[440px] flex-col items-center justify-center gap-4 rounded-lg border border-dashed border-border bg-secondary/50 p-8 text-center"
+                      className="flex min-h-[400px] flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-border bg-secondary/20 p-8 text-center"
                     >
-                      <div className="flex h-16 w-16 items-center justify-center rounded-full border border-border bg-white/70">
-                        <FileImage className="h-7 w-7 text-muted-foreground" />
+                      <div className="flex h-12 w-12 items-center justify-center rounded-full bg-secondary text-muted-foreground">
+                        <FileImage className="h-5 w-5" />
                       </div>
                       <div>
-                        <p className="font-semibold">No scan analyzed yet</p>
-                        <p className="mt-2 max-w-sm text-sm leading-6 text-muted-foreground">
+                        <p className="font-medium">No scan analyzed yet</p>
+                        <p className="mt-1 max-w-xs text-sm text-muted-foreground">
                           Select a patient sample above or upload a JPG/PNG CT
                           slice to populate the readout.
                         </p>

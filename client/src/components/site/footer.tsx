@@ -1,80 +1,70 @@
 import Link from "next/link";
-import { ScanLine, Github, ShieldCheck } from "lucide-react";
+import { Github, ScanLine, ShieldCheck } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="mt-20 border-t border-white/10 bg-[hsl(var(--graphite))] text-white">
+    <footer className="mt-auto border-t border-border bg-card">
       <div className="container py-12">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-10 md:grid-cols-4">
           <div className="md:col-span-2">
-            <div className="mb-4 flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-md border border-[hsl(var(--aqua)/0.22)] bg-white/10">
-                <ScanLine className="h-5 w-5 text-[hsl(var(--aqua))]" />
+            <div className="mb-4 flex items-center gap-2.5">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary/10 text-primary">
+                <ScanLine className="h-[18px] w-[18px]" />
               </div>
               <div>
-                <span className="text-base font-bold">
-                  Lung<span className="text-[hsl(var(--aqua))]">AI</span>
+                <span className="text-base font-semibold text-foreground">
+                  Lung<span className="text-primary">AI</span>
                 </span>
-                <p className="text-xs font-mono uppercase text-white/50">
+                <p className="text-xs text-muted-foreground">
                   Open-source imaging demo
                 </p>
               </div>
             </div>
-            <p className="max-w-md text-sm leading-relaxed text-white/60">
-              A polished educational interface for AI-assisted analysis of lung
-              CT scans. The model is experimental; the clinical disclaimer is
-              not decorative.
+            <p className="max-w-md text-sm leading-relaxed text-muted-foreground">
+              An educational interface for AI-assisted analysis of lung CT
+              scans. The model is experimental; the clinical disclaimer is not
+              decorative.
             </p>
-            <div className="mt-5 inline-flex items-center gap-2 rounded-md border border-[hsl(var(--amber)/0.4)] bg-[hsl(var(--amber)/0.12)] px-3 py-2 text-xs text-[hsl(var(--amber))]">
-              <ShieldCheck className="h-4 w-4" />
+            <div className="mt-4 inline-flex items-center gap-2 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-xs text-warning-foreground">
+              <ShieldCheck className="h-3.5 w-3.5 shrink-0" />
               Educational use only. Not a medical device.
             </div>
           </div>
 
           <div>
-            <p className="mb-3 font-mono text-xs uppercase text-[hsl(var(--aqua))]">Pages</p>
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Pages
+            </p>
             <ul className="space-y-2 text-sm">
-              <li>
-                <Link
-                  href="/early-detection"
-                  className="text-white/60 hover:text-[hsl(var(--aqua))]"
-                >
-                  Early Detection
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/how-it-works"
-                  className="text-white/60 hover:text-[hsl(var(--aqua))]"
-                >
-                  How It Works
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/how-to-use"
-                  className="text-white/60 hover:text-[hsl(var(--aqua))]"
-                >
-                  How to Use
-                </Link>
-              </li>
-              <li>
-                <Link href="/test" className="text-white/60 hover:text-[hsl(var(--aqua))]">
-                  Analyze Scan
-                </Link>
-              </li>
+              {[
+                { href: "/early-detection", label: "Early Detection" },
+                { href: "/how-it-works", label: "How It Works" },
+                { href: "/how-to-use", label: "How to Use" },
+                { href: "/test", label: "Analyze Scan" },
+              ].map((item) => (
+                <li key={item.href}>
+                  <Link
+                    href={item.href}
+                    className="text-muted-foreground transition-colors hover:text-primary"
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
           <div>
-            <p className="mb-3 font-mono text-xs uppercase text-[hsl(var(--aqua))]">Resources</p>
+            <p className="mb-3 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+              Resources
+            </p>
             <ul className="space-y-2 text-sm">
               <li>
                 <a
                   href="https://www.cdc.gov/cancer/lung/"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-white/60 hover:text-[hsl(var(--aqua))]"
+                  className="text-muted-foreground transition-colors hover:text-primary"
                 >
                   CDC Lung Cancer
                 </a>
@@ -84,7 +74,7 @@ export function Footer() {
                   href="https://www.cancer.org/research/cancer-facts-statistics.html"
                   target="_blank"
                   rel="noreferrer"
-                  className="text-white/60 hover:text-[hsl(var(--aqua))]"
+                  className="text-muted-foreground transition-colors hover:text-primary"
                 >
                   ACS Stats
                 </a>
@@ -94,7 +84,7 @@ export function Footer() {
                   href="https://github.com/syedarman1/LungAI"
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-white/60 hover:text-[hsl(var(--aqua))]"
+                  className="inline-flex items-center gap-1.5 text-muted-foreground transition-colors hover:text-primary"
                 >
                   <Github className="h-3.5 w-3.5" />
                   Source
@@ -104,9 +94,9 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-white/10 pt-6 text-xs text-white/50 md:flex-row">
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-border pt-6 text-xs text-muted-foreground md:flex-row">
           <p>© {new Date().getFullYear()} LungAI · MIT Licensed</p>
-          <p className="font-mono uppercase">No diagnosis · no clinical use</p>
+          <p>No diagnosis · no clinical use</p>
         </div>
       </div>
     </footer>
